@@ -1,21 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import ThreeCanvas from '@/components/ThreeCanvas';
-import { Laptop, Download, ShieldCheck, Sparkles, Lock, Cpu, CheckCircle2, Terminal, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { Download, Sparkles, Lock, Cpu, CheckCircle2, Globe, Layers, ArrowRight, ShieldCheck, TerminalSquare } from 'lucide-react';
 
 export default function OlymWebGatePage() {
-  const [packageFormat, setPackageFormat] = useState('dmg'); // 'dmg', 'app', 'script'
-
-  const m5Downloads = {
-    dmg: '/downloads/Olym-Browser-v1.0.0-macOS-AppleM5.dmg',
-    app: '/downloads/Olym-Browser-M5.app.zip',
-    script: '/downloads/fix-gatekeeper-m5.sh'
-  };
-
-  const activeDownloadFile = m5Downloads[packageFormat];
-
   return (
     <div style={{ position: 'relative', background: '#060608', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fafafa' }}>
       
@@ -33,10 +23,10 @@ export default function OlymWebGatePage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span className="mono" style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fff' }}>
-              Olym AI Web Browser — Apple M5 Series Native Edition
+              Olym AI — Chrome Extension (Manifest V3)
             </span>
             <span className="human-annotation">
-              {/* APPLE M5 CHIP EXCLUSIVE */}
+              {/* BROWSER EXTENSION EDITION */}
             </span>
           </div>
         </div>
@@ -58,70 +48,36 @@ export default function OlymWebGatePage() {
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <span className="pill mono glow-pulse" style={{ background: 'rgba(0, 255, 136, 0.14)', color: '#00ff88', borderColor: 'rgba(0, 255, 136, 0.35)' }}>
-              <Cpu size={12} style={{ display: 'inline', marginRight: '4px' }} />
-              Exclusive Target: Apple M5 Series Chips (M5, Pro, Max, Ultra)
+              <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
+              Manifest V3 Chrome Extension Ready
             </span>
           </div>
 
           <h1 className="refractive-heading" style={{ fontSize: '3.4rem', fontWeight: 800, lineHeight: 1.08, marginBottom: '16px' }}>
-            Download Olym Browser (Apple M5 Edition)
+            Olym AI Browser Companion Extension
           </h1>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.15rem', lineHeight: 1.65, maxWidth: '780px', margin: '0 auto' }}>
-            Optimized purely for Apple M5 Architecture. Runs with native hardware WebGPU execution, unblocked Chromium CDP control, and zero telemetry.
+            Install Olym AI directly into Google Chrome, Brave, Arc, or Edge. Runs as a Side Panel companion with live DOM access and local privacy.
           </p>
         </div>
 
-        {/* Apple M5 Series Exclusive Card */}
+        {/* Extension Download Card */}
         <div className="liquid-glass-card" style={{ padding: '40px', marginBottom: '32px', border: '1px solid rgba(0, 255, 136, 0.4)' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
             <div style={{ background: 'rgba(0, 255, 136, 0.15)', padding: '14px', borderRadius: '14px', color: '#00ff88' }}>
-              <Laptop size={32} />
+              <Globe size={32} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>Olym Browser for Apple M5 Chips</h2>
-              <div className="mono" style={{ fontSize: '0.82rem', color: '#00ff88' }}>Apple M5, M5 Pro, M5 Max, M5 Ultra • Arm64 Native</div>
-            </div>
-          </div>
-
-          {/* Package Format Choice */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '10px' }} className="mono">
-              Select Package Format:
-            </label>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-              <button
-                type="button"
-                onClick={() => setPackageFormat('dmg')}
-                className={`pill mono ${packageFormat === 'dmg' ? 'active' : ''}`}
-                style={{ padding: '10px', fontSize: '0.8rem', justifyContent: 'center' }}
-              >
-                📦 .DMG Installer Disk Image
-              </button>
-              <button
-                type="button"
-                onClick={() => setPackageFormat('app')}
-                className={`pill mono ${packageFormat === 'app' ? 'active' : ''}`}
-                style={{ padding: '10px', fontSize: '0.8rem', justifyContent: 'center' }}
-              >
-                🚀 .APP Standalone Bundle
-              </button>
-              <button
-                type="button"
-                onClick={() => setPackageFormat('script')}
-                className={`pill mono ${packageFormat === 'script' ? 'active' : ''}`}
-                style={{ padding: '10px', fontSize: '0.8rem', justifyContent: 'center' }}
-              >
-                🛡️ Gatekeeper Fix Script
-              </button>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>Olym AI Chrome Extension (.zip)</h2>
+              <div className="mono" style={{ fontSize: '0.82rem', color: '#00ff88' }}>Supports Chrome, Brave, Arc, Edge • Manifest V3</div>
             </div>
           </div>
 
           {/* Download CTA Button */}
           <a
-            href={activeDownloadFile}
+            href="/downloads/Olym-AI-Chrome-Extension.zip"
             download
             className="btn-clean"
             style={{
@@ -132,26 +88,40 @@ export default function OlymWebGatePage() {
               fontWeight: 800,
               justifyContent: 'center',
               boxShadow: '0 0 24px rgba(0, 255, 136, 0.4)',
-              marginBottom: '28px'
+              marginBottom: '32px'
             }}
           >
             <Download size={20} />
-            <span>Download Olym for Apple M5 ({packageFormat.toUpperCase()})</span>
+            <span>Download Olym AI Extension (.zip)</span>
           </a>
 
-          {/* macOS Gatekeeper Malware Warning Clearance Instructions */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.6)', border: '1px solid rgba(245, 158, 11, 0.4)', borderRadius: '8px', padding: '18px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f59e0b', fontWeight: 700, fontSize: '0.9rem', marginBottom: '8px' }}>
-              <ShieldAlert size={18} />
-              <span>How to bypass macOS Gatekeeper &quot;Malware / Unidentified Developer&quot; Warning</span>
-            </div>
+          {/* 3-Step Extension Installation Guide */}
+          <div style={{ background: 'rgba(0, 0, 0, 0.6)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }} className="mono">
+              ⚡ 3-Step Installation Guide:
+            </h3>
 
-            <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '10px' }}>
-              Because Olym is a custom local build without a paid Apple Developer ID, macOS Gatekeeper may display a warning on open. Run this 1-step command in Terminal to verify and clear quarantine instantly:
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <span className="mono" style={{ background: '#00ff88', color: '#000', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.78rem', flexShrink: 0 }}>1</span>
+                <div>
+                  <strong>Download & Extract</strong>: Download <code style={{ color: '#00ff88' }}>Olym-AI-Chrome-Extension.zip</code> above and unzip the contents to your computer.
+                </div>
+              </div>
 
-            <div style={{ background: '#040406', padding: '10px 14px', borderRadius: '6px', fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: '#00ff88', border: '1px solid var(--border)' }}>
-              <code>xattr -cr /Applications/Olym-Browser.app</code>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <span className="mono" style={{ background: '#00ff88', color: '#000', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.78rem', flexShrink: 0 }}>2</span>
+                <div>
+                  <strong>Open Extensions Page</strong>: Open <code style={{ color: '#818cf8' }}>chrome://extensions</code> in Chrome, Brave, Arc, or Edge.
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <span className="mono" style={{ background: '#00ff88', color: '#000', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.78rem', flexShrink: 0 }}>3</span>
+                <div>
+                  <strong>Load Unpacked Extension</strong>: Toggle on <strong>Developer mode</strong> (top right), click <strong>Load unpacked</strong>, and select the extracted extension folder!
+                </div>
+              </div>
             </div>
           </div>
 
