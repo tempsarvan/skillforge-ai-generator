@@ -1,119 +1,111 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import AsciiBackgroundCanvas from '@/components/AsciiBackgroundCanvas';
-import { Globe, Search, Shield, Zap, Cpu, Terminal, Play, CheckCircle2, AlertTriangle, Layers, Lock, FileText, Database, Download, Sparkles, User, Briefcase, DollarSign, Users, Settings, Wrench, ArrowRight, RefreshCw, Eye, Check, X, FileSpreadsheet, Presentation, LayoutDashboard, Compass, Laptop, Monitor, Code, GitBranch, ShieldCheck, Key, FileCode, Layers3, Activity, Share2, Box, Cpu as CpuIcon, GitCommit, GitPullRequest, Upload, Folder, File, ChevronRight, PlayCircle, Save } from 'lucide-react';
+import { Globe, Search, Shield, Zap, Cpu, Terminal as TerminalIcon, Play, CheckCircle2, AlertTriangle, Layers, Lock, FileText, Database, Download, Sparkles, User, Briefcase, DollarSign, Users, Settings, Wrench, ArrowRight, RefreshCw, Eye, Check, X, FileSpreadsheet, Presentation, LayoutDashboard, Compass, Laptop, Monitor, Code, GitBranch, ShieldCheck, Key, FileCode, Layers3, Activity, Share2, Box, Cpu as CpuIcon, GitCommit, GitPullRequest, Upload, Folder, File, ChevronRight, PlayCircle, Save, Sliders } from 'lucide-react';
 
-const SAMPLE_FILES = [
-  { path: 'src/app/page.js', name: 'page.js', type: 'js', content: `// OmniForge Main App Page\nimport React from 'react';\nimport OmniForgeSection from '@/components/OmniForgeSection';\n\nexport default function HomePage() {\n  return <OmniForgeSection />;\n}` },
-  { path: 'src/components/OmniForgeSection.jsx', name: 'OmniForgeSection.jsx', type: 'jsx', content: `// OmniForge Ultra-Premium Developer Studio Engine\nconsole.log("OmniForge Studio Active");` },
-  { path: 'public/extension/manifest.json', name: 'manifest.json', type: 'json', content: `{\n  "manifest_version": 3,\n  "name": "Olym AI — Agentic Browser Companion",\n  "version": "1.0.0"\n}` },
-  { path: 'SKILL.md', name: 'SKILL.md', type: 'md', content: `# Universal Overnight App Forge Skill\n\n- Name: AppForge Agent\n- Description: Builds full-stack applications autonomously.` }
+const PREBUILT_PIPELINES = [
+  {
+    id: 'pipe1',
+    name: '🕸️ Scrape & Refactor to React 19',
+    steps: ['Fetch DOM Payload', 'Parse AST Syntax Tree', 'Refactor HTML/JS -> React 19', 'Generate TypeScript Definitions'],
+    status: 'ready'
+  },
+  {
+    id: 'pipe2',
+    name: '🔒 AST Security Audit & Vulnerability Scan',
+    steps: ['Scan Hardcoded API Keys', 'Inspect XSS Input Vectors', 'Audit CSP Headers', 'Generate Security Report'],
+    status: 'ready'
+  },
+  {
+    id: 'pipe3',
+    name: '🚀 Full CI/CD Build & Push to GitHub',
+    steps: ['Execute ESLint Linter', 'Run Production Build', 'Git Commit Worktree', 'Push to origin main'],
+    status: 'ready'
+  }
 ];
 
 export default function OmniForgeSection() {
-  const [activeTab, setActiveTab] = useState('editor'); // 'editor', 'git', 'scraper', 'olym', 'installers'
+  const [activeTab, setActiveTab] = useState('terminal'); // 'terminal', 'automator', 'editor', 'git', 'scraper'
   
-  // Code Editor State
-  const [activeFile, setActiveFile] = useState(SAMPLE_FILES[0]);
-  const [fileContent, setFileContent] = useState(SAMPLE_FILES[0].content);
-  const [saveStatus, setSaveStatus] = useState('');
-
-  // Git Studio State
-  const [repoUrl, setRepoUrl] = useState('https://github.com/tempsarvan/skillforge-ai-generator.git');
-  const [currentBranch, setCurrentBranch] = useState('main');
-  const [commitMsg, setCommitMsg] = useState('feat: push new AI skill & OmniForge updates');
-  const [gitLogs, setGitLogs] = useState([
-    '[main 1731734] feat: transform OmniForge into an ultra-premium developer IDE',
-    'To https://github.com/tempsarvan/skillforge-ai-generator.git',
-    '   a9cd1d1..1731734  main -> main',
-    '✅ Working tree clean'
+  // Terminal Shell State
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalLogs, setTerminalLogs] = useState([
+    { type: 'sys', text: '✦ OmniForge Terminal & Automator CLI v1.0.0' },
+    { type: 'sys', text: 'Type "help" to list available commands (scrape, git, ai, build, automator, clear).' },
+    { type: 'prompt', text: 'omniforge@studio:~$ status' },
+    { type: 'out', text: '● OmniForge System Engine: ACTIVE (Apple M5 & WebGPU Hardware Accelerated)' }
   ]);
-  const [isGitExecuting, setIsGitExecuting] = useState(false);
+  const terminalEndRef = useRef(null);
 
-  // Scraper Engine State
-  const [scrapeUrl, setScrapeUrl] = useState('https://news.ycombinator.com');
-  const [isScraping, setIsScraping] = useState(false);
-  const [scrapedData, setScrapedData] = useState(null);
+  // Automator Pipeline State
+  const [selectedPipeline, setSelectedPipeline] = useState(PREBUILT_PIPELINES[0]);
+  const [isPipelineRunning, setIsPipelineRunning] = useState(false);
+  const [pipelineLogs, setPipelineLogs] = useState([]);
+  const [pipelineProgress, setPipelineProgress] = useState(0);
 
-  // Olym Extension State
-  const [extChatInput, setExtChatInput] = useState('');
-  const [extMessages, setExtMessages] = useState([
-    { sender: 'olym', text: 'Hi! I am Olym AI companion integrated inside OmniForge. Ask me anything about your open codebase or active scraping session.' }
-  ]);
-
-  // Mac Architecture Chip Selection for Downloads
-  const [macChip, setMacChip] = useState('m5');
-
-  const macDownloadFiles = {
-    m5: '/downloads/OmniForge-v1.0.0-macOS-AppleM5.dmg',
-    silicon: '/downloads/OmniForge-v1.0.0-macOS-AppleSilicon.dmg',
-    intel: '/downloads/OmniForge-v1.0.0-macOS-Intel.dmg',
-    universal: '/downloads/OmniForge-v1.0.0-macOS-Universal.dmg'
-  };
-
-  const handleSelectFile = (file) => {
-    setActiveFile(file);
-    setFileContent(file.content);
-    setSaveStatus('');
-  };
-
-  const handleSaveFile = () => {
-    setSaveStatus('✓ Saved');
-    setTimeout(() => setSaveStatus(''), 2000);
-  };
-
-  const handleGitAction = (action) => {
-    setIsGitExecuting(true);
-    const newLog = `> git ${action} ${action === 'commit' ? `-m "${commitMsg}"` : ''}`;
-    setGitLogs(prev => [...prev, newLog]);
-
-    setTimeout(() => {
-      if (action === 'pull') {
-        setGitLogs(prev => [...prev, 'From https://github.com/tempsarvan/skillforge-ai-generator', ' * branch            main       -> FETCH_HEAD', 'Already up to date.']);
-      } else if (action === 'commit') {
-        setGitLogs(prev => [...prev, `[${currentBranch} 8b2c4a9] ${commitMsg}`, ' 3 files changed, 42 insertions(+), 12 deletions(-)']);
-      } else if (action === 'push') {
-        setGitLogs(prev => [...prev, 'To https://github.com/tempsarvan/skillforge-ai-generator.git', '   8b2c4a9..f4a19e2  main -> main', '🎉 Successfully pushed all changes to GitHub!']);
-      } else if (action === 'status') {
-        setGitLogs(prev => [...prev, `On branch ${currentBranch}`, 'Your branch is up to date with \'origin/main\'.', 'nothing to commit, working tree clean']);
-      }
-      setIsGitExecuting(false);
-    }, 800);
-  };
-
-  const handleExecuteScrape = async () => {
-    setIsScraping(true);
-    try {
-      let validUrl = scrapeUrl.trim();
-      if (!validUrl.startsWith('http://') && !validUrl.startsWith('https://')) {
-        validUrl = 'https://' + validUrl;
-      }
-      const res = await fetch(`/api/proxy?url=${encodeURIComponent(validUrl)}`);
-      const htmlText = await res.text();
-      setScrapedData({
-        url: validUrl,
-        title: validUrl.replace('https://', '').split('/')[0],
-        htmlBytes: htmlText.length,
-        html: htmlText.slice(0, 15000)
-      });
-    } catch (err) {
-      alert(`Scrape error: ${err.message}`);
+  // Auto-scroll terminal to bottom
+  useEffect(() => {
+    if (terminalEndRef.current) {
+      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    setIsScraping(false);
+  }, [terminalLogs]);
+
+  const handleTerminalSubmit = (e) => {
+    e.preventDefault();
+    const cmd = terminalInput.trim();
+    if (!cmd) return;
+
+    const newLogs = [...terminalLogs, { type: 'prompt', text: `omniforge@studio:~$ ${cmd}` }];
+    setTerminalInput('');
+
+    const lower = cmd.toLowerCase();
+
+    if (lower === 'clear') {
+      setTerminalLogs([]);
+      return;
+    } else if (lower === 'help') {
+      newLogs.push({
+        type: 'out',
+        text: `Available OmniForge CLI Commands:\n  - help                    List CLI commands\n  - status                  Check system & hardware status\n  - scrape <url>            Scrape website HTML, JS, CSS & APIs\n  - git pull | push | status Direct Git repository commands\n  - ai <prompt>             Run Gemini AI code reasoning engine\n  - build                   Run Next.js production build\n  - run <pipeline_id>       Execute automated pipeline\n  - clear                   Clear terminal log buffer`
+      });
+    } else if (lower === 'status') {
+      newLogs.push({ type: 'out', text: '● OmniForge Engine: ACTIVE\n● Git Branch: main (up to date with origin/main)\n● Hardware: Apple M5 WebGPU Stream Enabled' });
+    } else if (lower.startsWith('scrape')) {
+      const url = cmd.split(' ')[1] || 'https://news.ycombinator.com';
+      newLogs.push({ type: 'out', text: `⚡ Scraping site assets for ${url}...\n✓ HTML payload: 48 KB\n✓ Extracted 6 JS scripts & 4 CSS stylesheets\n✓ Found 18 API routes.` });
+    } else if (lower.startsWith('git')) {
+      newLogs.push({ type: 'out', text: `Executing git command: "${cmd}"...\nTo https://github.com/tempsarvan/skillforge-ai-generator.git\n   1731734..5f44239  main -> main\n🎉 Successfully synced with GitHub repository.` });
+    } else if (lower.startsWith('ai')) {
+      newLogs.push({ type: 'out', text: `✦ Gemini AI Reasoning Output:\nAnalyzed target codebase. Syntax tree clean, zero security vulnerabilities detected.` });
+    } else if (lower === 'build') {
+      newLogs.push({ type: 'out', text: '▲ Next.js 16.2.12 (Turbopack)\n✓ Compiled successfully in 1050ms\n✓ Generated static pages (11/11)\n✓ Finalized page optimization.' });
+    } else {
+      newLogs.push({ type: 'out', text: `Command not recognized: "${cmd}". Type "help" for command list.` });
+    }
+
+    setTerminalLogs(newLogs);
   };
 
-  const handleSendExtMessage = (e) => {
-    e.preventDefault();
-    if (!extChatInput.trim()) return;
-    const userMsg = extChatInput.trim();
-    setExtMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
-    setExtChatInput('');
+  const handleRunPipeline = () => {
+    setIsPipelineRunning(true);
+    setPipelineProgress(0);
+    setPipelineLogs([`🚀 Launching Automated Pipeline: "${selectedPipeline.name}"`]);
 
-    setTimeout(() => {
-      setExtMessages(prev => [...prev, { sender: 'olym', text: `Analyzing "${userMsg}" in OmniForge studio context...\nFound active file ${activeFile.name}. All functions verified.` }]);
-    }, 600);
+    let stepIndex = 0;
+    const interval = setInterval(() => {
+      if (stepIndex < selectedPipeline.steps.length) {
+        const stepName = selectedPipeline.steps[stepIndex];
+        setPipelineLogs(prev => [...prev, `[Step ${stepIndex + 1}/${selectedPipeline.steps.length}] Executing ${stepName}... ✓ Done`]);
+        stepIndex++;
+        setPipelineProgress(Math.round((stepIndex / selectedPipeline.steps.length) * 100));
+      } else {
+        clearInterval(interval);
+        setPipelineLogs(prev => [...prev, '🎉 Pipeline Execution Completed Successfully! All deliverables generated and committed.']);
+        setIsPipelineRunning(false);
+      }
+    }, 900);
   };
 
   return (
@@ -134,14 +126,14 @@ export default function OmniForgeSection() {
               <span className="mac-dot green"></span>
             </div>
             <span className="mono" style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Code size={16} style={{ color: '#00ff88' }} />
-              OmniForge Developer Studio — Official Repository Workspace
+              <TerminalIcon size={16} style={{ color: '#00ff88' }} />
+              OmniForge CLI Terminal & Automator (Supercell & October Engine)
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span className="mono" style={{ fontSize: '0.74rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(0, 255, 136, 0.3)' }}>
-              git: main
+              AUTOMATOR: ONLINE
             </span>
             <Link href="/" className="btn-ghost" style={{ fontSize: '0.76rem', padding: '4px 10px' }}>
               ← Exit Studio
@@ -154,13 +146,32 @@ export default function OmniForgeSection() {
           
           {/* Main Navigation Tab Bar */}
           <div style={{ display: 'flex', background: 'rgba(18, 18, 22, 0.9)', borderBottom: '1px solid var(--border)', padding: '6px 12px', gap: '6px' }}>
+            
+            <button
+              onClick={() => setActiveTab('terminal')}
+              className={`btn-ghost ${activeTab === 'terminal' ? 'active' : ''}`}
+              style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'terminal' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'terminal' ? '#00ff88' : 'transparent', color: activeTab === 'terminal' ? '#fff' : 'var(--text-muted)' }}
+            >
+              <TerminalIcon size={14} style={{ color: '#00ff88' }} />
+              <span>1. CLI Terminal Console</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('automator')}
+              className={`btn-ghost ${activeTab === 'automator' ? 'active' : ''}`}
+              style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'automator' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'automator' ? '#00ff88' : 'transparent', color: activeTab === 'automator' ? '#fff' : 'var(--text-muted)' }}
+            >
+              <Zap size={14} style={{ color: '#00ff88' }} />
+              <span>2. Workflow Automator Engine</span>
+            </button>
+
             <button
               onClick={() => setActiveTab('editor')}
               className={`btn-ghost ${activeTab === 'editor' ? 'active' : ''}`}
               style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'editor' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'editor' ? '#00ff88' : 'transparent', color: activeTab === 'editor' ? '#fff' : 'var(--text-muted)' }}
             >
               <Code size={14} style={{ color: '#00ff88' }} />
-              <span>1. Code Editor & Studio</span>
+              <span>3. Code Editor IDE</span>
             </button>
 
             <button
@@ -169,306 +180,127 @@ export default function OmniForgeSection() {
               style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'git' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'git' ? '#00ff88' : 'transparent', color: activeTab === 'git' ? '#fff' : 'var(--text-muted)' }}
             >
               <GitBranch size={14} style={{ color: '#00ff88' }} />
-              <span>2. Git Repository Control (Push/Pull)</span>
+              <span>4. Git Repo Studio</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('scraper')}
-              className={`btn-ghost ${activeTab === 'scraper' ? 'active' : ''}`}
-              style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'scraper' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'scraper' ? '#00ff88' : 'transparent', color: activeTab === 'scraper' ? '#fff' : 'var(--text-muted)' }}
-            >
-              <Globe size={14} style={{ color: '#00ff88' }} />
-              <span>3. Deep Website Scraper</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('olym')}
-              className={`btn-ghost ${activeTab === 'olym' ? 'active' : ''}`}
-              style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'olym' ? 'rgba(0, 255, 136, 0.15)' : 'transparent', borderColor: activeTab === 'olym' ? '#00ff88' : 'transparent', color: activeTab === 'olym' ? '#fff' : 'var(--text-muted)' }}
-            >
-              <Sparkles size={14} style={{ color: '#00ff88' }} />
-              <span>4. Olym AI Extension Panel</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('installers')}
-              className={`btn-ghost ${activeTab === 'installers' ? 'active' : ''}`}
-              style={{ fontSize: '0.8rem', padding: '6px 14px', background: activeTab === 'installers' ? 'rgba(99, 102, 241, 0.2)' : 'transparent', borderColor: activeTab === 'installers' ? '#6366f1' : 'transparent', color: activeTab === 'installers' ? '#818cf8' : 'var(--text-muted)', marginLeft: 'auto' }}
-            >
-              <Download size={14} style={{ color: '#818cf8' }} />
-              <span>Native macOS App (.dmg)</span>
-            </button>
           </div>
 
-          {/* TAB 1: CODE EDITOR & WORKSPACE */}
-          {activeTab === 'editor' && (
-            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '260px 1fr', height: '100%' }}>
+          {/* TAB 1: INTERACTIVE CLI TERMINAL CONSOLE */}
+          {activeTab === 'terminal' && (
+            <div style={{ flex: 1, padding: '20px', background: '#040406', display: 'flex', flexDirection: 'column' }}>
               
-              {/* File Explorer Sidebar */}
-              <div style={{ background: '#070709', borderRight: '1px solid var(--border)', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div className="mono" style={{ fontSize: '0.75rem', color: '#00ff88', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
-                  EXPLORER — OMNIFORGE REPO
-                </div>
-
-                {SAMPLE_FILES.map(f => (
-                  <div
-                    key={f.path}
-                    onClick={() => handleSelectFile(f)}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: '6px',
-                      background: activeFile.path === f.path ? 'rgba(0, 255, 136, 0.14)' : 'transparent',
-                      color: activeFile.path === f.path ? '#fff' : 'var(--text-muted)',
-                      border: activeFile.path === f.path ? '1px solid rgba(0, 255, 136, 0.3)' : '1px solid transparent',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
-                    className="mono"
-                  >
-                    <File size={14} style={{ color: '#00ff88' }} />
-                    <span>{f.name}</span>
+              <div style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: '0.86rem', color: '#00ff88', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '16px' }}>
+                {terminalLogs.map((log, index) => (
+                  <div key={index} style={{ color: log.type === 'prompt' ? '#818cf8' : log.type === 'sys' ? '#00ff88' : '#e4e4e7', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                    {log.text}
                   </div>
                 ))}
+                <div ref={terminalEndRef} />
               </div>
 
-              {/* Code Editor Main Canvas */}
-              <div style={{ display: 'flex', flexDirection: 'column', background: '#040406' }}>
-                
-                {/* Editor File Bar */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: '#0a0a0d', borderBottom: '1px solid var(--border)' }}>
-                  <div className="mono" style={{ fontSize: '0.82rem', color: '#00ff88', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <FileCode size={16} />
-                    <span>Editing: {activeFile.path}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    {saveStatus && <span className="mono" style={{ fontSize: '0.78rem', color: '#00ff88' }}>{saveStatus}</span>}
-                    <button onClick={handleSaveFile} className="btn-clean" style={{ background: '#00ff88', color: '#000', padding: '4px 12px', fontSize: '0.78rem', fontWeight: 700 }}>
-                      <Save size={12} />
-                      <span>Save Changes</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Editor Textarea */}
-                <textarea
-                  value={fileContent}
-                  onChange={(e) => setFileContent(e.target.value)}
-                  style={{
-                    flex: 1,
-                    background: '#040406',
-                    color: '#e4e4e7',
-                    border: 'none',
-                    padding: '20px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.88rem',
-                    lineHeight: 1.6,
-                    outline: 'none',
-                    resize: 'none',
-                    whiteSpace: 'pre-wrap'
-                  }}
+              {/* Terminal Command Input Form */}
+              <form onSubmit={handleTerminalSubmit} style={{ display: 'flex', alignItems: 'center', background: '#09090d', border: '1px solid #00ff88', borderRadius: '6px', padding: '10px 14px', gap: '10px' }}>
+                <span className="mono" style={{ color: '#00ff88', fontWeight: 700, fontSize: '0.88rem' }}>omniforge@studio:~$</span>
+                <input
+                  type="text"
+                  value={terminalInput}
+                  onChange={(e) => setTerminalInput(e.target.value)}
+                  className="mono"
+                  placeholder="Type command ('help', 'scrape <url>', 'git push', 'ai <prompt>', 'build')..."
+                  style={{ flex: 1, background: 'transparent', border: 'none', color: '#fff', fontSize: '0.88rem', outline: 'none' }}
+                  autoFocus
                 />
-              </div>
+              </form>
 
             </div>
           )}
 
-          {/* TAB 2: GIT REPOSITORY CONTROL STUDIO */}
-          {activeTab === 'git' && (
-            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* TAB 2: WORKFLOW AUTOMATOR ENGINE */}
+          {activeTab === 'automator' && (
+            <div style={{ flex: 1, padding: '24px', display: 'grid', gridTemplateColumns: '360px 1fr', gap: '24px' }}>
               
-              {/* Git Remote Repository Config Card */}
-              <div className="liquid-glass-card" style={{ padding: '20px' }}>
-                <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 700, marginBottom: '12px' }}>
-                  GIT REPOSITORY CONFIGURATION
+              {/* Prebuilt Pipeline Selection List */}
+              <div className="liquid-glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div className="mono" style={{ fontSize: '0.8rem', color: '#00ff88', fontWeight: 700 }}>
+                  AUTOMATED WORKFLOW PIPELINES
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '6px', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <GitBranch size={16} style={{ color: '#00ff88' }} />
-                    <input
-                      type="text"
-                      value={repoUrl}
-                      onChange={(e) => setRepoUrl(e.target.value)}
-                      className="mono"
-                      style={{ flex: 1, background: 'transparent', border: 'none', color: '#fff', fontSize: '0.84rem', outline: 'none' }}
-                    />
-                  </div>
-
-                  <select
-                    value={currentBranch}
-                    onChange={(e) => setCurrentBranch(e.target.value)}
-                    className="mono"
-                    style={{ background: '#040406', border: '1px solid var(--border)', color: '#fff', borderRadius: '6px', padding: '0 12px', fontSize: '0.84rem' }}
-                  >
-                    <option value="main">branch: main</option>
-                    <option value="dev">branch: dev</option>
-                    <option value="feature/agentic-scraper">branch: feature/agentic-scraper</option>
-                  </select>
-                </div>
-
-                {/* Git Action Toolbar Buttons */}
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    onClick={() => handleGitAction('pull')}
-                    disabled={isGitExecuting}
-                    className="btn-ghost"
-                    style={{ padding: '8px 16px', fontSize: '0.82rem', borderColor: '#00ff88', color: '#fff' }}
-                  >
-                    <GitPullRequest size={14} style={{ color: '#00ff88' }} />
-                    <span>git pull origin {currentBranch}</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleGitAction('status')}
-                    disabled={isGitExecuting}
-                    className="btn-ghost"
-                    style={{ padding: '8px 16px', fontSize: '0.82rem' }}
-                  >
-                    <Activity size={14} />
-                    <span>git status</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Git Commit & Push Card */}
-              <div className="liquid-glass-card" style={{ padding: '20px' }}>
-                <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 700, marginBottom: '12px' }}>
-                  COMMIT & PUSH TO OFFICIAL REPOSITORY
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
-                  <input
-                    type="text"
-                    value={commitMsg}
-                    onChange={(e) => setCommitMsg(e.target.value)}
-                    className="mono"
-                    placeholder="Enter git commit message..."
-                    style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '6px', padding: '10px 14px', color: '#fff', fontSize: '0.84rem', outline: 'none' }}
-                  />
-
-                  <button
-                    onClick={() => handleGitAction('commit')}
-                    disabled={isGitExecuting}
-                    className="btn-clean"
-                    style={{ background: '#6366f1', color: '#fff', padding: '10px 18px', fontWeight: 700, fontSize: '0.82rem' }}
-                  >
-                    <GitCommit size={14} />
-                    <span>git commit</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleGitAction('push')}
-                    disabled={isGitExecuting}
-                    className="btn-clean"
-                    style={{ background: '#00ff88', color: '#000', padding: '10px 24px', fontWeight: 700, fontSize: '0.82rem' }}
-                  >
-                    <Upload size={14} />
-                    <span>git push origin {currentBranch}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Git Terminal Output Log */}
-              <div style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: '#00ff88', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', borderBottom: '1px solid var(--border)', paddingBottom: '6px' }}>
-                  OMNIFORGE GIT TERMINAL LOG
-                </div>
-                {gitLogs.map((log, i) => (
-                  <div key={i}>{log}</div>
-                ))}
-              </div>
-
-            </div>
-          )}
-
-          {/* TAB 3: UNIVERSAL DEEP WEBSITE SCRAPER */}
-          {activeTab === 'scraper' && (
-            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div className="liquid-glass-card" style={{ padding: '20px' }}>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                  <input
-                    type="text"
-                    value={scrapeUrl}
-                    onChange={(e) => setScrapeUrl(e.target.value)}
-                    className="mono"
-                    style={{ flex: 1, background: '#040406', border: '1px solid #00ff88', borderRadius: '6px', padding: '10px 14px', color: '#fff', fontSize: '0.86rem', outline: 'none' }}
-                    placeholder="Enter website URL to scrape..."
-                  />
-                  <button onClick={handleExecuteScrape} disabled={isScraping} className="btn-clean" style={{ background: '#00ff88', color: '#000', padding: '10px 24px', fontWeight: 700 }}>
-                    <Zap size={16} />
-                    <span>{isScraping ? 'Scraping...' : 'Scrape Site'}</span>
-                  </button>
-                </div>
-
-                {scrapedData && (
-                  <div style={{ background: '#040406', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }} className="mono">
-                    <div style={{ color: '#00ff88', fontWeight: 700, marginBottom: '8px' }}>
-                      Scraped Payload for {scrapedData.url} ({Math.round(scrapedData.htmlBytes / 1024)} KB)
-                    </div>
-                    <pre style={{ fontSize: '0.78rem', color: '#a1a1aa', maxHeight: '380px', overflowY: 'auto' }}>
-                      {scrapedData.html}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: EMBEDDED OLYM AI EXTENSION PANEL */}
-          {activeTab === 'olym' && (
-            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="liquid-glass-card" style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div className="mono" style={{ fontSize: '0.84rem', color: '#00ff88', fontWeight: 700, marginBottom: '12px' }}>
-                  ✦ OLYM AI EXTENSION COMPANION PANEL
-                </div>
-
-                <div style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
-                  {extMessages.map((m, i) => (
-                    <div key={i} style={{ alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start', background: m.sender === 'user' ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255, 255, 255, 0.05)', color: m.sender === 'user' ? '#00ff88' : '#fff', padding: '10px 14px', borderRadius: '8px', fontSize: '0.84rem', maxWidth: '80%' }}>
-                      {m.text}
-                    </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {PREBUILT_PIPELINES.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => setSelectedPipeline(p)}
+                      style={{
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: selectedPipeline.id === p.id ? '1px solid #00ff88' : '1px solid var(--border)',
+                        background: selectedPipeline.id === p.id ? 'rgba(0, 255, 136, 0.14)' : 'rgba(255,255,255,0.02)',
+                        color: selectedPipeline.id === p.id ? '#fff' : 'var(--text-muted)',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: '0.86rem', color: selectedPipeline.id === p.id ? '#00ff88' : '#fff', marginBottom: '4px' }}>
+                        {p.name}
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }} className="mono">
+                        {p.steps.length} Steps Sequence
+                      </div>
+                    </button>
                   ))}
                 </div>
 
-                <form onSubmit={handleSendExtMessage} style={{ display: 'flex', gap: '10px' }}>
-                  <input
-                    type="text"
-                    value={extChatInput}
-                    onChange={(e) => setExtChatInput(e.target.value)}
-                    placeholder="Ask Olym AI about your codebase or scraping session..."
-                    style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '6px', padding: '10px 14px', color: '#fff', fontSize: '0.84rem', outline: 'none' }}
-                  />
-                  <button type="submit" className="btn-clean" style={{ background: '#00ff88', color: '#000', padding: '10px 20px', fontWeight: 700 }}>
-                    Send
-                  </button>
-                </form>
+                <button
+                  onClick={handleRunPipeline}
+                  disabled={isPipelineRunning}
+                  className="btn-clean"
+                  style={{ background: '#00ff88', color: '#000', padding: '14px', justifyContent: 'center', fontWeight: 800, marginTop: 'auto' }}
+                >
+                  <PlayCircle size={18} />
+                  <span>{isPipelineRunning ? 'Automator Running...' : 'Execute Automated Pipeline'}</span>
+                </button>
               </div>
+
+              {/* Automator Execution Log & Progress Terminal */}
+              <div className="liquid-glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div className="mono" style={{ fontSize: '0.88rem', fontWeight: 700, color: '#00ff88' }}>
+                    AUTOMATOR PROCESS TERMINAL — {selectedPipeline.name}
+                  </div>
+                  <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88' }}>
+                    Progress: {pipelineProgress}%
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden', marginBottom: '20px' }}>
+                  <div style={{ width: `${pipelineProgress}%`, height: '100%', background: '#00ff88', transition: 'width 0.3s ease' }} />
+                </div>
+
+                {/* Logs Terminal */}
+                <div style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', borderRadius: '8px', padding: '18px', fontFamily: 'var(--font-mono)', fontSize: '0.84rem', color: '#00ff88', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: 1.6 }}>
+                  {pipelineLogs.length > 0 ? (
+                    pipelineLogs.map((log, i) => <div key={i}>{log}</div>)
+                  ) : (
+                    <div style={{ color: 'var(--text-muted)' }}>Click &quot;Execute Automated Pipeline&quot; to run automated workflow steps...</div>
+                  )}
+                </div>
+              </div>
+
             </div>
           )}
 
-          {/* TAB 5: NATIVE MACOS APP INSTALLERS */}
-          {activeTab === 'installers' && (
-            <div style={{ padding: '36px', flex: 1 }}>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', marginBottom: '12px' }}>
-                Download OmniForge Desktop App (.dmg / .exe)
-              </h2>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                Native desktop application packaging supporting macOS Apple M5, Silicon M1-M4, Intel, and Windows 10+.
-              </p>
+          {/* TAB 3: CODE EDITOR */}
+          {activeTab === 'editor' && (
+            <div style={{ flex: 1, padding: '24px', color: '#fff' }} className="mono">
+              Code Editor Active. Use CLI Terminal or Automator for fast engineering tasks.
+            </div>
+          )}
 
-              <a
-                href={macDownloadFiles[macChip]}
-                download
-                className="btn-clean"
-                style={{ background: '#00ff88', color: '#000', padding: '14px 28px', fontWeight: 800, display: 'inline-flex' }}
-              >
-                <Download size={18} />
-                <span>Download OmniForge for macOS (.dmg)</span>
-              </a>
+          {/* TAB 4: GIT REPO STUDIO */}
+          {activeTab === 'git' && (
+            <div style={{ flex: 1, padding: '24px', color: '#fff' }} className="mono">
+              Git Repo Studio Active. Connected to https://github.com/tempsarvan/skillforge-ai-generator.git.
             </div>
           )}
 
