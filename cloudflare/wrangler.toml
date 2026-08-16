@@ -1,6 +1,7 @@
 name = "omniforge-studio"
 main = "worker.js"
 compatibility_date = "2026-08-16"
+workers_dev = true
 
 # Cloudflare Subdomain Route Configuration
 routes = [
@@ -12,3 +13,4 @@ routes = [
 ENVIRONMENT = "production"
 DOWNLOADS_ENABLED = "false"
 NEXT_PUBLIC_APP_URL = "https://studio.omniforge.dev"
+CLOUDFLARE_DEV_DOMAIN = "https://omniforge-studio.workers.dev"
