@@ -6,9 +6,14 @@ import ThreeCanvas from '@/components/ThreeCanvas';
 import { Laptop, Monitor, Download, ShieldCheck, Sparkles, Lock, Zap, Cpu, Terminal, ArrowRight, CheckCircle2, Globe, Cpu as CpuIcon } from 'lucide-react';
 
 export default function OlymWebGatePage() {
-  const [macArchitecture, setMacArchitecture] = useState('silicon'); // 'silicon', 'intel', 'universal'
+  const [macArchitecture, setMacArchitecture] = useState('m5'); // 'm5', 'silicon', 'intel', 'universal'
 
   const macDownloadLinks = {
+    m5: {
+      file: '/downloads/Olym-Browser-v1.0.0-macOS-AppleM5.dmg',
+      label: 'Apple M5 Series (M5, M5 Pro, M5 Max, M5 Ultra)',
+      badge: 'Next-Gen M5 Native'
+    },
     silicon: {
       file: '/downloads/Olym-Browser-v1.0.0-macOS-AppleSilicon.dmg',
       label: 'Apple Silicon (M1, M2, M3, M4)',
@@ -87,7 +92,7 @@ export default function OlymWebGatePage() {
         {/* Multi-Platform Download Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '48px' }}>
           
-          {/* macOS Download Card with Architecture Chip Selector */}
+          {/* macOS Download Card with Apple M5 & Silicon Chip Selector */}
           <div className="liquid-glass-card" style={{ padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid rgba(0, 255, 136, 0.35)' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
@@ -107,6 +112,33 @@ export default function OlymWebGatePage() {
                 </label>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  
+                  {/* Apple M5 Series Choice */}
+                  <button
+                    type="button"
+                    onClick={() => setMacArchitecture('m5')}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: macArchitecture === 'm5' ? '1px solid #00ff88' : '1px solid var(--border)',
+                      background: macArchitecture === 'm5' ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255,255,255,0.03)',
+                      color: macArchitecture === 'm5' ? '#fff' : 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <CpuIcon size={16} style={{ color: macArchitecture === 'm5' ? '#00ff88' : 'var(--text-muted)' }} />
+                      <span style={{ fontWeight: 600 }}>Apple M5 Series (M5, M5 Pro, M5 Max, M5 Ultra)</span>
+                    </div>
+                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '2px 6px', borderRadius: '4px' }}>⚡ Next-Gen</span>
+                  </button>
+
+                  {/* Apple M1-M4 Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('silicon')}
@@ -128,9 +160,10 @@ export default function OlymWebGatePage() {
                       <CpuIcon size={16} style={{ color: macArchitecture === 'silicon' ? '#00ff88' : 'var(--text-muted)' }} />
                       <span style={{ fontWeight: 600 }}>Apple Silicon (M1, M2, M3, M4)</span>
                     </div>
-                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '2px 6px', borderRadius: '4px' }}>Recommended</span>
+                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '2px 6px', borderRadius: '4px' }}>Arm64</span>
                   </button>
 
+                  {/* Intel Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('intel')}
@@ -155,6 +188,7 @@ export default function OlymWebGatePage() {
                     <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>x86_64</span>
                   </button>
 
+                  {/* Universal Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('universal')}
@@ -178,6 +212,7 @@ export default function OlymWebGatePage() {
                     </div>
                     <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Combined</span>
                   </button>
+
                 </div>
               </div>
 

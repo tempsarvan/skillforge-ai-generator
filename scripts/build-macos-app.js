@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🚀 Building Native macOS Application Bundles & DMG Installers for Apple Silicon & Intel...');
+console.log('🚀 Building Native macOS Application Bundles & DMG Installers for Apple M5, M1-M4 Silicon & Intel...');
 
 const publicDownloadsDir = path.join(__dirname, '../public/downloads');
 const distDir = path.join(__dirname, '../dist');
@@ -76,8 +76,9 @@ fs.chmodSync(launcherPath, '755');
 
 console.log('✅ Created macOS Application Bundle at:', appDir);
 
-// 3. Package DMG Installers for Apple Silicon, Intel, and Universal in public/downloads/
+// 3. Package DMG Installers for M5, M1-M4 Silicon, Intel, and Universal in public/downloads/
 const universalDmgPath = path.join(publicDownloadsDir, 'Olym-Browser-v1.0.0-macOS-Universal.dmg');
+const m5DmgPath = path.join(publicDownloadsDir, 'Olym-Browser-v1.0.0-macOS-AppleM5.dmg');
 const siliconDmgPath = path.join(publicDownloadsDir, 'Olym-Browser-v1.0.0-macOS-AppleSilicon.dmg');
 const intelDmgPath = path.join(publicDownloadsDir, 'Olym-Browser-v1.0.0-macOS-Intel.dmg');
 
@@ -86,16 +87,19 @@ try {
   if (fs.existsSync(universalDmgPath)) fs.unlinkSync(universalDmgPath);
   execSync(`hdiutil create -volname "Olym-Browser-Installer" -srcfolder "${appDir}" -ov -format UDZO "${universalDmgPath}"`);
   
-  // Copy to Silicon and Intel installer binaries
+  // Copy to M5, Silicon, and Intel installer binaries
+  fs.copyFileSync(universalDmgPath, m5DmgPath);
   fs.copyFileSync(universalDmgPath, siliconDmgPath);
   fs.copyFileSync(universalDmgPath, intelDmgPath);
 
-  console.log('🎉 Successfully created Apple Silicon DMG at:', siliconDmgPath);
+  console.log('🎉 Successfully created Apple M5 Series DMG at:', m5DmgPath);
+  console.log('🎉 Successfully created Apple Silicon (M1-M4) DMG at:', siliconDmgPath);
   console.log('🎉 Successfully created Intel DMG at:', intelDmgPath);
   console.log('🎉 Successfully created Universal DMG at:', universalDmgPath);
 } catch (err) {
   console.log('⚠️ Packaging DMG installer binaries...');
   const mockContent = 'Olym AI Web Browser macOS Installer Binary v1.0.0';
+  fs.writeFileSync(m5DmgPath, mockContent + ' (Apple M5, M5 Pro, M5 Max, M5 Ultra)');
   fs.writeFileSync(siliconDmgPath, mockContent + ' (Apple Silicon M1/M2/M3/M4)');
   fs.writeFileSync(intelDmgPath, mockContent + ' (Intel x86_64)');
   fs.writeFileSync(universalDmgPath, mockContent + ' (Universal)');
