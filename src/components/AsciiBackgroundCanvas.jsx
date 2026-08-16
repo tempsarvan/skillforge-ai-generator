@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-const ASCII_GLYPHS = ['λ', 'Σ', 'Δ', 'W', 'η', 'σ', 'α', 'β', 'γ', '0', '1', '@', '#', '$', '%', '*', '+', '=', '~', '!', '░', '▒', '▓', '█', '✦', '⚡', '►'];
+const INFINITY_ASCII_CHARS = ['∞', '8', 'λ', 'Σ', 'Δ', 'W', 'η', 'σ', '@', '#', '$', '%', '*', '+', '⚡', '✦'];
 
 export default function AsciiBackgroundCanvas() {
   const canvasRef = useRef(null);
@@ -22,15 +22,15 @@ export default function AsciiBackgroundCanvas() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Mouse coordinates with smooth liquid inertia easing
-    let targetMouseX = width / 2;
-    let targetMouseY = height / 2;
-    let currentMouseX = width / 2;
-    let currentMouseY = height / 2;
+    // Mouse coordinates
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+    let isMouseActive = false;
 
     const handleMouseMove = (e) => {
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      isMouseActive = true;
     };
     window.addEventListener('mousemove', handleMouseMove);
 
@@ -41,148 +41,173 @@ export default function AsciiBackgroundCanvas() {
     };
     window.addEventListener('scroll', handleScroll);
 
-    // Grid settings for Wall-to-Wall Dense ASCII Background
-    const fontSize = 14;
-    const fontWidth = 10;
-    const fontHeight = 16;
-    
-    // 3D Spinning ASCII Cube state
-    let cubeAngleA = 0;
-    let cubeAngleB = 0;
+    // --- 3D SPINNING ASCII INFINITY SYMBOL PHYSICS NODES ---
+    const nodeCount = 220; // Number of points along the lemniscate curve
+    const scale = Math.min(width, height) * 0.38; // Size of the infinity symbol
 
-    // Stream drops for digital rain columns
-    const columns = Math.ceil(width / fontWidth) + 10;
-    const rows = Math.ceil(height / fontHeight) + 10;
-    const drops = Array.from({ length: columns }, () => Math.floor(Math.random() * -50));
-
-    // Persistent ASCII matrix grid
-    const asciiGrid = Array.from({ length: rows }, () =>
-      Array.from({ length: columns }, () => ({
-        char: ASCII_GLYPHS[Math.floor(Math.random() * ASCII_GLYPHS.length)],
+    const nodes = Array.from({ length: nodeCount }, (_, i) => {
+      const t = (i / nodeCount) * Math.PI * 2;
+      return {
+        t,
+        x: width / 2,
+        y: height / 2,
+        vx: 0,
+        vy: 0,
+        char: INFINITY_ASCII_CHARS[i % INFINITY_ASCII_CHARS.length],
         flipTimer: Math.floor(Math.random() * 100),
-        depth: Math.random() * 0.3 + 0.05
-      }))
-    );
+        collided: false
+      };
+    });
 
-    let frameCount = 0;
+    let angleX = 0;
+    let angleY = 0;
+    let angleZ = 0;
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
-      frameCount++;
-      cubeAngleA += 0.02;
-      cubeAngleB += 0.015;
 
-      // Interpolate mouse movement
-      currentMouseX += (targetMouseX - currentMouseX) * 0.08;
-      currentMouseY += (targetMouseY - currentMouseY) * 0.08;
+      // Continuous 3D rotation angles
+      angleX += 0.008;
+      angleY += 0.012;
+      angleZ += 0.005;
 
-      const mouseOffsetX = (currentMouseX - width / 2) * 0.08;
-      const mouseOffsetY = (currentMouseY - height / 2) * 0.08;
+      const centerX = width / 2;
+      const centerY = height / 2;
 
       // Radial mouse spotlight background
-      const radGrad = ctx.createRadialGradient(
-        currentMouseX, currentMouseY, 0,
-        currentMouseX, currentMouseY, 700
-      );
-      radGrad.addColorStop(0, 'rgba(0, 255, 136, 0.14)');
-      radGrad.addColorStop(0.4, 'rgba(99, 102, 241, 0.06)');
-      radGrad.addColorStop(1, 'rgba(4, 4, 6, 0.95)');
+      const radGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 600);
+      radGrad.addColorStop(0, 'rgba(0, 255, 136, 0.12)');
+      radGrad.addColorStop(0.4, 'rgba(99, 102, 241, 0.04)');
+      radGrad.addColorStop(1, 'rgba(4, 4, 6, 0.96)');
       ctx.fillStyle = radGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // --- DENSE ANIMATED ASCII MATRIX GRID ---
-      ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
+      const sinX = Math.sin(angleX), cosX = Math.cos(angleX);
+      const sinY = Math.sin(angleY), cosY = Math.cos(angleY);
+      const sinZ = Math.sin(angleZ), cosZ = Math.cos(angleZ);
 
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < columns; c++) {
-          const cell = asciiGrid[r][c];
+      // --- CALCULATE 3D LEMNISCATE (INFINITY ∞) GEOMETRY ---
+      const renderedNodes = nodes.map(node => {
+        const t = node.t;
+        const denom = 1 + Math.sin(t) * Math.sin(t);
+        
+        // Base 3D Lemniscate of Bernoulli equations
+        let x0 = (scale * Math.cos(t)) / denom;
+        let y0 = (scale * Math.sin(t) * Math.cos(t)) / denom;
+        let z0 = (scale * 0.4 * Math.sin(2 * t));
 
-          // Character flip animation
-          cell.flipTimer++;
-          if (cell.flipTimer > 120) {
-            cell.char = ASCII_GLYPHS[Math.floor(Math.random() * ASCII_GLYPHS.length)];
-            cell.flipTimer = 0;
-          }
+        // 3D Rotation Matrix (Yaw, Pitch, Roll)
+        // Rotate Y
+        let x1 = x0 * cosY + z0 * sinY;
+        let y1 = y0;
+        let z1 = -x0 * sinY + z0 * cosY;
 
-          // Compute position with 3D Parallax & Scroll
-          const x = c * fontWidth + mouseOffsetX * cell.depth;
-          const y = (r * fontHeight - (scrollY * 0.25)) + mouseOffsetY * cell.depth;
+        // Rotate X
+        let x2 = x1;
+        let y2 = y1 * cosX - z1 * sinX;
+        let z2 = y1 * sinX + z1 * cosX;
 
-          // Wrap scroll bounds
-          const wrappedY = ((y % height) + height) % height;
+        // Rotate Z
+        let x3 = x2 * cosZ - y2 * sinZ;
+        let y3 = x2 * sinZ + y2 * cosZ;
+        let z3 = z2;
 
-          // Distance to cursor spotlight
-          const dx = x - currentMouseX;
-          const dy = wrappedY - currentMouseY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+        // Target Home Position on Screen
+        const targetX = centerX + x3;
+        const targetY = (centerY + y3) - (scrollY * 0.25);
+        const depthFactor = (z3 + scale) / (scale * 2); // 0 (far) -> 1 (near)
 
-          let alpha = 0.18;
-          let color = `rgba(255, 255, 255, ${alpha})`;
+        // --- CURSOR COLLISION PHYSICS ENGINE ---
+        const dx = node.x - mouseX;
+        const dy = node.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const collisionRadius = 150; // Threshold radius for collision
 
-          if (dist < 260) {
-            const glow = (1 - dist / 260);
-            alpha = 0.2 + glow * 0.75;
-            color = `rgba(0, 255, 136, ${alpha})`; // Electric green highlight
-          } else if (dist < 450) {
-            const glow = (1 - dist / 450);
-            alpha = 0.18 + glow * 0.4;
-            color = `rgba(129, 140, 248, ${alpha})`; // Indigo highlight
-          }
+        let isColliding = false;
 
-          // Digital Rain stream drops highlight
-          if (drops[c] === r) {
-            color = '#ffffff';
-            ctx.shadowColor = '#00ff88';
-            ctx.shadowBlur = 8;
-          } else {
-            ctx.shadowBlur = 0;
-          }
+        if (dist < collisionRadius && dist > 0) {
+          isColliding = true;
+          const force = (collisionRadius - dist) / collisionRadius;
+          const angle = Math.atan2(dy, dx);
+          
+          // Impulse repulsion away from cursor
+          node.vx += Math.cos(angle) * force * 6.5;
+          node.vy += Math.sin(angle) * force * 6.5;
+        }
 
-          ctx.fillStyle = color;
-          ctx.fillText(cell.char, x, wrappedY);
+        // Spring restoration force back to target 3D infinity curve position
+        const springK = 0.14;
+        const damping = 0.80;
+
+        node.vx += (targetX - node.x) * springK;
+        node.vy += (targetY - node.y) * springK;
+
+        node.vx *= damping;
+        node.vy *= damping;
+
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // Character flip animation
+        node.flipTimer++;
+        if (node.flipTimer > 90) {
+          node.char = INFINITY_ASCII_CHARS[Math.floor(Math.random() * INFINITY_ASCII_CHARS.length)];
+          node.flipTimer = 0;
+        }
+
+        return {
+          ...node,
+          depthFactor,
+          isColliding,
+          speed: Math.sqrt(node.vx * node.vx + node.vy * node.vy)
+        };
+      });
+
+      // --- DRAW CONNECTING ASCII NEURAL RIBBON LINES ---
+      for (let i = 0; i < renderedNodes.length; i++) {
+        const p1 = renderedNodes[i];
+        const p2 = renderedNodes[(i + 1) % renderedNodes.length];
+
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 80) {
+          const alpha = (1 - dist / 80) * 0.35 * p1.depthFactor;
+          ctx.strokeStyle = p1.isColliding || p2.isColliding
+            ? `rgba(0, 255, 136, ${alpha * 1.5})`
+            : `rgba(99, 102, 241, ${alpha})`;
+          ctx.lineWidth = p1.depthFactor * 1.8 + 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
         }
       }
 
-      // Update Digital Rain columns
-      for (let i = 0; i < drops.length; i++) {
-        if (frameCount % 3 === 0) {
-          drops[i]++;
-          if (drops[i] * fontHeight > height && Math.random() > 0.95) {
-            drops[i] = 0;
-          }
+      // --- DRAW 3D ASCII INFINITY GLYPHS ---
+      renderedNodes.forEach(node => {
+        const fontSize = Math.floor(node.depthFactor * 12 + 12); // Dynamic font size based on Z-depth
+        ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
+
+        let alpha = Math.max(0.2, node.depthFactor * 0.85);
+        let color = `rgba(255, 255, 255, ${alpha})`;
+
+        // Collision ignition glow
+        if (node.isColliding || node.speed > 2.0) {
+          color = '#00ff88'; // Electric green ignition on collision
+          ctx.shadowColor = '#00ff88';
+          ctx.shadowBlur = 12;
+        } else if (node.depthFactor > 0.6) {
+          color = `rgba(129, 140, 248, ${alpha})`; // Indigo glow for front curve
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.shadowBlur = 0;
         }
-      }
 
-      // --- 3D SPINNING ASCII CUBE IN BACKGROUND ---
-      const cubeWidth = 8;
-      const distanceFromCam = 22;
-      const K1 = 18;
-      const cx = width * 0.75 + mouseOffsetX * 0.2;
-      const cy = height * 0.4 + mouseOffsetY * 0.2;
-
-      const sinA = Math.sin(cubeAngleA), cosA = Math.cos(cubeAngleA);
-      const sinB = Math.sin(cubeAngleB), cosB = Math.cos(cubeAngleB);
-
-      ctx.fillStyle = 'rgba(0, 255, 136, 0.4)';
-      ctx.font = '12px "JetBrains Mono", monospace';
-
-      for (let x = -cubeWidth; x < cubeWidth; x += 1.8) {
-        for (let y = -cubeWidth; y < cubeWidth; y += 1.8) {
-          // Rotate points in 3D
-          const rx = x * cosB - y * sinB;
-          const ry = x * sinB + y * cosB;
-          const rz = cubeWidth;
-
-          const ry2 = ry * cosA - rz * sinA;
-          const rz2 = ry * sinA + rz * cosA;
-
-          const ooz = 1 / (rz2 + distanceFromCam);
-          const px = Math.floor(cx + K1 * ooz * rx * 1.8);
-          const py = Math.floor(cy + K1 * ooz * ry2);
-
-          ctx.fillText('#', px, py);
-        }
-      }
+        ctx.fillStyle = color;
+        ctx.fillText(node.char, node.x, node.y);
+      });
 
       animId = requestAnimationFrame(draw);
     };
@@ -200,7 +225,7 @@ export default function AsciiBackgroundCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      aria-label="Full-screen Animated ASCII Matrix Background Canvas"
+      aria-label="Full-screen Spinning 3D ASCII Infinity Symbol Background with Cursor Collision Physics"
       style={{
         position: 'fixed',
         inset: 0,
