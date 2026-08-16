@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import HeroSection from '@/components/HeroSection';
 import StudentBioSection from '@/components/StudentBioSection';
+import OlymBrowserPortal from '@/components/OlymBrowserPortal';
 import SkillGeneratorPortal from '@/components/SkillGeneratorPortal';
 import GitHubProjectsSection from '@/components/GitHubProjectsSection';
 import WorksSection from '@/components/WorksSection';
@@ -219,9 +220,10 @@ export default function Home() {
 
           <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <a href="#bio" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.88rem' }}>Bio</a>
-            <a href="#skill-generator-tool" style={{ color: '#00ff88', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}>Skill Studio</a>
-            <a href="#github-repos" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.88rem' }}>GitHub Projects</a>
-            <Link href="/omniforge" style={{ color: '#818cf8', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}>OmniForge App</Link>
+            <Link href="/olym" style={{ color: '#00ff88', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}>Olym Browser</Link>
+            <a href="#skill-generator-tool" style={{ color: '#818cf8', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}>Skill Studio</a>
+            <a href="#github-repos" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.88rem' }}>GitHub Repos</a>
+            <Link href="/omniforge" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.88rem' }}>OmniForge App</Link>
             <a href="#inquire" style={{ color: '#fafafa', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}>Inquire</a>
           </nav>
         </div>
@@ -234,6 +236,11 @@ export default function Home() {
 
         {/* Student Bio Section */}
         <StudentBioSection />
+
+        <div className="section-divider"></div>
+
+        {/* Olym Browser Companion Portal Section */}
+        <OlymBrowserPortal />
 
         <div className="section-divider"></div>
 
@@ -271,10 +278,10 @@ export default function Home() {
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontWeight: 600, fontSize: '1rem' }}>Sarvan</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Student Developer & Next.js 15 Architect</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Student Developer & Creator of Olym Browser</div>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            © 2026 Sarvan. Built with Next.js & React 19.
+            © 2026 Sarvan. Built with Next.js 15 & React 19.
           </div>
         </div>
       </footer>
