@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:mac": "node scripts/build-macos-app.js"
+    "build:mac": "node scripts/build-macos-app.js",
+    "build:win": "node scripts/build-windows-app.js"
   },
   "dependencies": {
     "lucide-react": "^1.27.0",

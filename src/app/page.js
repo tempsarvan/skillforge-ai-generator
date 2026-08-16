@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import ThreeCanvas from '@/components/ThreeCanvas';
 import HeroSection from '@/components/HeroSection';
 import StudentBioSection from '@/components/StudentBioSection';
 import OlymBrowserPortal from '@/components/OlymBrowserPortal';
@@ -18,91 +19,6 @@ export default function Home() {
   const [inquireStatus, setInquireStatus] = useState(null);
 
   const canvasRef = useRef(null);
-  const bgCanvasRef = useRef(null);
-
-  // Background particle mesh
-  useEffect(() => {
-    const canvas = bgCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animId;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', handleResize);
-
-    const nodes = Array.from({ length: 30 }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      radius: Math.random() * 1.5 + 0.5
-    }));
-
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-
-    const handleMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 400);
-      grad.addColorStop(0, 'rgba(99, 102, 241, 0.05)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 110) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.07 * (1 - dist / 110)})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-
-        if (n.x < 0 || n.x > width) n.vx *= -1;
-        if (n.y < 0 || n.y > height) n.vy *= -1;
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      animId = requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
 
   // WebGPU Card Particle simulation
   useEffect(() => {
@@ -202,8 +118,9 @@ export default function Home() {
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
-      <canvas ref={bgCanvasRef} aria-label="Interactive particle background animation canvas" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
+    <div style={{ position: 'relative', minHeight: '100vh', scrollBehavior: 'smooth' }}>
+      {/* Three.js 3D Torus Mesh Background */}
+      <ThreeCanvas />
 
       {/* Header */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(9, 9, 11, 0.88)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
@@ -214,7 +131,7 @@ export default function Home() {
             </div>
             <div>
               <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Sarvan</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginLeft: '8px' }}>/ Student & Next.js Architect</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginLeft: '8px' }}>/ Student Developer & AI Systems Architect</span>
             </div>
           </div>
 
@@ -278,7 +195,7 @@ export default function Home() {
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontWeight: 600, fontSize: '1rem' }}>Sarvan</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Student Developer & Creator of Olym Browser</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Student Developer & Creator of Olym AI Browser</div>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             © 2026 Sarvan. Built with Next.js 15 & React 19.

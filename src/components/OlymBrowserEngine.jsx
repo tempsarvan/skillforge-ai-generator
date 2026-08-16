@@ -2,81 +2,42 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import AsciiBackgroundCanvas from '@/components/AsciiBackgroundCanvas';
-import { Globe, Search, Shield, Zap, Cpu, Terminal, Play, CheckCircle2, AlertTriangle, Layers, Lock, FileText, Database, Download, Sparkles, User, Briefcase, DollarSign, Users, Settings, Wrench, ArrowRight, RefreshCw, Eye, Check, X, FileSpreadsheet, Presentation, LayoutDashboard, Compass, ArrowLeft, ArrowRight as ArrowRightIcon, RotateCw, Plus, PanelRightClose, PanelRightOpen, ExternalLink, Bookmark, Share2, Sparkle, Laptop, Monitor } from 'lucide-react';
+import { Globe, Search, Shield, Zap, Cpu, Terminal, Play, CheckCircle2, AlertTriangle, Layers, Lock, FileText, Database, Download, Sparkles, User, Briefcase, DollarSign, Users, Settings, Wrench, ArrowRight, RefreshCw, Eye, Check, X, FileSpreadsheet, Presentation, LayoutDashboard, Compass, ArrowLeft, ArrowRight as ArrowRightIcon, RotateCw, Plus, PanelRightClose, PanelRightOpen, ExternalLink, Bookmark, Share2, Sparkle, ShieldCheck, Key, BookOpen, Layers3 } from 'lucide-react';
 
-const PRESET_WEBSITES = [
-  { id: 'hn', title: 'Hacker News', url: 'https://news.ycombinator.com', favicon: '🍊' },
-  { id: 'github', title: 'GitHub — tempsarvan', url: 'https://github.com/tempsarvan', favicon: '🐙' },
-  { id: 'wiki', title: 'Wikipedia — AI', url: 'https://en.wikipedia.org/wiki/Artificial_intelligence', favicon: '🌐' },
-  { id: 'dev', title: 'Dev.to — WebGPU', url: 'https://dev.to', favicon: '💻' }
-];
-
-const SKILL_ROLES = [
-  {
-    role: 'Founder / Exec',
-    icon: Briefcase,
-    skills: [
-      { id: 'fundraise-prep', title: 'Fundraise Prep & Investor Memo', desc: 'Reads active page -> Extracts traction -> Generates investment memo' },
-      { id: 'team-workflow', title: 'Shared Team Workflow Setup', desc: 'Scans team tools -> Outputs Notion SOP & onboarding brief' }
-    ]
-  },
-  {
-    role: 'Sales & Outreach',
-    icon: DollarSign,
-    skills: [
-      { id: 'account-research', title: 'Account Research & Meeting Prep', desc: 'Scrapes target website -> Pulls CRM notes -> Creates sales battle card' },
-      { id: 'lead-enrichment', title: 'Lead Enrichment & Outreach', desc: 'Extracts contact info -> Drafts custom email with approval gate' }
-    ]
-  },
-  {
-    role: 'Marketing & SEO',
-    icon: Compass,
-    skills: [
-      { id: 'competitor-analysis', title: 'Competitor Analysis & SEO Audit', desc: 'Audits competitor site -> Benchmarks keywords -> Outputs HTML report' }
-    ]
-  },
-  {
-    role: 'Product & Eng',
-    icon: Terminal,
-    skills: [
-      { id: 'issue-repro-pr', title: 'Investigate Issue (Logs -> Repro -> PR)', desc: 'Inspects DOM console -> Repros bug in browser -> Drafts PR' }
-    ]
-  }
+const SHORTCUTS = [
+  { id: 'hn', title: 'Hacker News', url: 'https://news.ycombinator.com', icon: '🍊' },
+  { id: 'github', title: 'GitHub', url: 'https://github.com/tempsarvan', icon: '🐙' },
+  { id: 'wiki', title: 'Wikipedia', url: 'https://en.wikipedia.org', icon: '🌐' },
+  { id: 'ph', title: 'Product Hunt', url: 'https://producthunt.com', icon: '😸' },
+  { id: 'dev', title: 'Dev.to', url: 'https://dev.to', icon: '💻' },
+  { id: 'twitter', title: 'X / Twitter', url: 'https://x.com', icon: '🐦' }
 ];
 
 export default function OlymBrowserEngine() {
   // Tabs State
   const [tabs, setTabs] = useState([
-    { id: '1', title: 'Hacker News', url: 'https://news.ycombinator.com', favicon: '🍊' },
-    { id: '2', title: 'GitHub — tempsarvan', url: 'https://github.com/tempsarvan', favicon: '🐙' }
+    { id: '1', title: 'New Tab', url: 'olym://home', favicon: '✦', isHome: true },
+    { id: '2', title: 'Hacker News', url: 'https://news.ycombinator.com', favicon: '🍊', isHome: false }
   ]);
   const [activeTabId, setActiveTabId] = useState('1');
-  const [inputUrl, setInputUrl] = useState('https://news.ycombinator.com');
-  const [activeTargetUrl, setActiveTargetUrl] = useState('https://news.ycombinator.com');
-  const [isLoadingPage, setIsLoadingPage] = useState(false);
-
-  // Sidebar / Companion Drawer State (Dia & Strawberry Competitor UI)
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarMode, setSidebarMode] = useState('assistant'); // 'assistant', 'skills', 'inspector', 'deliverables'
-
-  // AI Chat Assistant
-  const [chatMessages, setChatMessages] = useState([
-    { sender: 'olym', text: 'Welcome to Olym Browser. I am your integrated AI companion powered by live Chromium CDP context.' }
-  ]);
-  const [userPrompt, setUserPrompt] = useState('');
-
-  // Selected Skill & Execution Loop
-  const [selectedSkill, setSelectedSkill] = useState(SKILL_ROLES[0].skills[0]);
-  const [isRunningSkill, setIsRunningSkill] = useState(false);
-  const [skillLogs, setSkillLogs] = useState([]);
+  const [inputUrl, setInputUrl] = useState('olym://home');
+  const [activeTargetUrl, setActiveTargetUrl] = useState('olym://home');
   
-  // Deliverable Artifact State
-  const [generatedArtifact, setGeneratedArtifact] = useState(null);
+  // Workspaces State
+  const [activeWorkspace, setActiveWorkspace] = useState('Personal'); // 'Personal', 'Work', 'Research'
 
-  // Human Approval Modal State
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [pendingWriteAction, setPendingWriteAction] = useState(null);
+  // Shield / Ad Blocker Stats (Brave Shield / Trademark style, 100% Free)
+  const [shieldEnabled, setShieldEnabled] = useState(true);
+  const [vpnEnabled, setVpnEnabled] = useState(true);
+  const [blockedAdsCount] = useState(24190);
+  const [dataSavedMB] = useState(340);
+
+  // Sidebar AI Companion Toggle (Clean Arc/Dia Style)
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarMode, setSidebarMode] = useState('assistant');
+
+  // Reader Mode Toggle
+  const [readerMode, setReaderMode] = useState(false);
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
@@ -89,25 +50,32 @@ export default function OlymBrowserEngine() {
   const handleNavigate = (e) => {
     if (e) e.preventDefault();
     let formattedUrl = inputUrl.trim();
-    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+
+    if (formattedUrl === 'olym://home' || formattedUrl === 'home' || formattedUrl === '') {
+      formattedUrl = 'olym://home';
+    } else if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://') && !formattedUrl.startsWith('olym://')) {
       formattedUrl = 'https://' + formattedUrl;
     }
-    setIsLoadingPage(true);
+
     setInputUrl(formattedUrl);
     setActiveTargetUrl(formattedUrl);
 
-    setTimeout(() => setIsLoadingPage(false), 500);
-
-    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, url: formattedUrl, title: formattedUrl.replace('https://', '').split('/')[0] } : t));
+    setTabs(prev => prev.map(t => t.id === activeTabId ? {
+      ...t,
+      url: formattedUrl,
+      title: formattedUrl === 'olym://home' ? 'New Tab' : formattedUrl.replace('https://', '').split('/')[0],
+      isHome: formattedUrl === 'olym://home',
+      favicon: formattedUrl === 'olym://home' ? '✦' : '🌐'
+    } : t));
   };
 
   const handleAddTab = () => {
     const newId = String(Date.now());
-    const newTab = { id: newId, title: 'New Tab', url: 'https://news.ycombinator.com', favicon: '🌐' };
+    const newTab = { id: newId, title: 'New Tab', url: 'olym://home', favicon: '✦', isHome: true };
     setTabs(prev => [...prev, newTab]);
     setActiveTabId(newId);
-    setInputUrl(newTab.url);
-    setActiveTargetUrl(newTab.url);
+    setInputUrl('olym://home');
+    setActiveTargetUrl('olym://home');
   };
 
   const handleCloseTab = (tabId, e) => {
@@ -122,131 +90,49 @@ export default function OlymBrowserEngine() {
     }
   };
 
-  const handleSendPrompt = (e) => {
-    if (e) e.preventDefault();
-    if (!userPrompt.trim()) return;
-
-    const userText = userPrompt;
-    setChatMessages(prev => [...prev, { sender: 'user', text: userText }]);
-    setUserPrompt('');
-
-    setTimeout(() => {
-      setChatMessages(prev => [
-        ...prev,
-        {
-          sender: 'olym',
-          text: `Analyzing live web page context at ${activeTargetUrl} via Chromium proxy...\n\nExtracted active page DOM tree. Based on your prompt "${userText}", I recommend running the ${selectedSkill.title} skill.`
-        }
-      ]);
-    }, 600);
-  };
-
-  const handleRunSkill = () => {
-    setIsRunningSkill(true);
-    setSkillLogs([
-      `[Chromium Engine] Fetching unblocked page stream at ${activeTargetUrl}...`,
-      `[Skill Planner] Executing ${selectedSkill.title}...`
-    ]);
-
-    setTimeout(() => {
-      setSkillLogs(prev => [
-        ...prev,
-        '[MCP Connector] Extracting team context & past history...',
-        '[AI Runtime] Synthesizing structured deliverable with citations...'
-      ]);
-    }, 800);
-
-    setTimeout(() => {
-      setSkillLogs(prev => [
-        ...prev,
-        '✅ Skill execution complete! Deliverable ready.',
-        '⚠️ Outward write proposed: Sending email summary to team.'
-      ]);
-
-      setGeneratedArtifact({
-        title: `Deliverable: ${selectedSkill.title}`,
-        url: activeTargetUrl,
-        date: new Date().toLocaleDateString(),
-        content: `Executive Deliverable for ${activeTargetUrl}:\n\n1. Active Page Summary: Successfully parsed Chromium live stream.\n2. Identified key strategic opportunities.\n3. Verified zero security vulnerabilities.\n\nSources Cited:\n- ${activeTargetUrl}`
-      });
-
-      setPendingWriteAction({
-        target: 'Gmail / Team Slack',
-        action: 'Send Executive Summary Email',
-        diff: `+ TO: team@company.com\n+ SUBJECT: ${selectedSkill.title} Report\n+ BODY: Attached deliverable generated from ${activeTargetUrl}`
-      });
-
-      setShowApprovalModal(true);
-      setIsRunningSkill(false);
-      setSidebarMode('deliverables');
-    }, 1600);
-  };
-
-  // Proxied URL to bypass framing restrictions (X-Frame-Options & CSP) so logins & forms work 100%!
-  const proxiedIframeSrc = `/api/proxy?url=${encodeURIComponent(activeTargetUrl)}`;
+  const proxiedIframeSrc = activeTargetUrl.startsWith('olym://')
+    ? null
+    : `/api/proxy?url=${encodeURIComponent(activeTargetUrl)}`;
 
   return (
-    <div style={{ position: 'relative', background: '#09090d', height: '100vh', display: 'flex', flexDirection: 'column', color: '#fafafa', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', background: '#f4f4f5', height: '100vh', display: 'flex', flexDirection: 'column', color: '#18181b', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif', overflow: 'hidden' }}>
       
-      {/* Human-in-the-Loop Write Approval Gate Modal */}
-      {showApprovalModal && pendingWriteAction && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 99999,
-          background: 'rgba(0, 0, 0, 0.85)',
-          backdropFilter: 'blur(20px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px'
-        }}>
-          <div className="liquid-glass-card" style={{ maxWidth: '620px', width: '100%', padding: '28px', border: '1px solid rgba(0, 255, 136, 0.4)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#00ff88', marginBottom: '14px', fontWeight: 700, fontSize: '1.1rem' }}>
-              <Shield size={22} />
-              <span>Human Approval Gate — Confirm External Write</span>
-            </div>
-
-            <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', marginBottom: '16px', lineHeight: 1.5 }}>
-              Olym Browser is requesting permission to perform an outward-facing action:
-            </p>
-
-            <div style={{ background: '#040406', border: '1px solid var(--border)', padding: '14px', borderRadius: '6px', fontSize: '0.82rem', fontFamily: 'var(--font-mono)', marginBottom: '20px', color: '#00ff88' }}>
-              <div style={{ fontWeight: 600, color: '#fff', marginBottom: '6px' }}>Target: {pendingWriteAction.target}</div>
-              <div style={{ color: 'var(--text-muted)', marginBottom: '10px' }}>{pendingWriteAction.action}</div>
-              <pre style={{ margin: 0, color: '#00ff88', whiteSpace: 'pre-wrap' }}>
-                {pendingWriteAction.diff}
-              </pre>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setShowApprovalModal(false)} className="btn-ghost" style={{ padding: '8px 18px', color: '#ef4444', borderColor: 'rgba(239,68,68,0.4)' }}>
-                <X size={16} />
-                <span>Reject Action</span>
-              </button>
-              <button onClick={() => setShowApprovalModal(false)} className="btn-clean" style={{ padding: '8px 22px', background: '#00ff88', color: '#000', fontWeight: 700 }}>
-                <Check size={16} />
-                <span>Approve & Execute Write</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 1. TOP BROWSER HEADER BAR (HUMAN-CRAFTED BROWSER SHELL) */}
-      <header style={{ background: '#0d0d14', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column' }}>
+      {/* 1. CLEAN MODERN BROWSER SHELL HEADER */}
+      <header style={{ background: '#ffffff', borderBottom: '1px solid #e4e4e7', display: 'flex', flexDirection: 'column', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
         
-        {/* Row 1: macOS Controls & Multi-Tab Bar with Smooth Motion */}
-        <div style={{ display: 'flex', alignItems: 'center', height: '42px', padding: '0 12px', gap: '12px', background: '#060609' }}>
-          {/* macOS window dots */}
+        {/* Row 1: macOS Window Controls & Clean Tab Strip */}
+        <div style={{ display: 'flex', alignItems: 'center', height: '40px', padding: '0 14px', gap: '12px', background: '#fafafa', borderBottom: '1px solid #f4f4f5' }}>
+          {/* macOS window controls */}
           <div className="mac-dots" style={{ marginRight: '8px' }}>
             <span className="mac-dot red"></span>
             <span className="mac-dot yellow"></span>
             <span className="mac-dot green"></span>
           </div>
 
-          {/* Tab Strip */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, overflowX: 'auto' }}>
+          {/* Workspaces Switcher */}
+          <div style={{ display: 'flex', background: '#e4e4e7', padding: '2px', borderRadius: '6px', gap: '2px', marginRight: '8px' }}>
+            {['Personal', 'Work', 'Research'].map(ws => (
+              <button
+                key={ws}
+                onClick={() => setActiveWorkspace(ws)}
+                style={{
+                  background: activeWorkspace === ws ? '#ffffff' : 'transparent',
+                  color: activeWorkspace === ws ? '#18181b' : '#71717a',
+                  border: 'none',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                {ws}
+              </button>
+            ))}
+          </div>
+
+          {/* Clean Tab Strip */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, overflowX: 'auto' }}>
             {tabs.map(tab => {
               const isActive = tab.id === activeTabId;
               return (
@@ -257,27 +143,27 @@ export default function OlymBrowserEngine() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    padding: '7px 16px',
-                    borderRadius: '8px 8px 0 0',
-                    background: isActive ? '#14141f' : 'rgba(255,255,255,0.03)',
-                    border: isActive ? '1px solid var(--border)' : '1px solid transparent',
-                    borderBottom: 'none',
-                    color: isActive ? '#fff' : 'var(--text-muted)',
+                    padding: '6px 14px',
+                    borderRadius: '6px',
+                    background: isActive ? '#ffffff' : 'transparent',
+                    boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    border: isActive ? '1px solid #e4e4e7' : '1px solid transparent',
+                    color: isActive ? '#18181b' : '#71717a',
                     fontSize: '0.8rem',
+                    fontWeight: isActive ? 600 : 400,
                     cursor: 'pointer',
-                    maxWidth: '220px',
+                    maxWidth: '200px',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)'
+                    transition: 'all 0.15s ease'
                   }}
-                  className="mono"
                 >
                   <span>{tab.favicon}</span>
                   <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{tab.title}</span>
                   <button
                     onClick={(e) => handleCloseTab(tab.id, e)}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0, display: 'flex' }}
+                    style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', padding: 0, display: 'flex' }}
                   >
                     <X size={12} />
                   </button>
@@ -287,331 +173,302 @@ export default function OlymBrowserEngine() {
 
             <button
               onClick={handleAddTab}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px 10px', borderRadius: '4px' }}
+              style={{ background: 'none', border: 'none', color: '#71717a', cursor: 'pointer', padding: '6px 10px', borderRadius: '4px' }}
               title="New Tab"
             >
               <Plus size={14} />
             </button>
           </div>
 
-          {/* Navigation Back to Portfolio */}
-          <Link href="/" className="btn-ghost" style={{ fontSize: '0.74rem', padding: '4px 10px' }}>
-            ← Return to Portfolio
+          <Link href="/" style={{ color: '#71717a', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 500 }}>
+            ← Portfolio
           </Link>
         </div>
 
-        {/* Row 2: Omnibox Navigation & Address Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px', gap: '12px', background: '#101018', position: 'relative' }}>
+        {/* Row 2: Omnibox Navigation & Trademark Shields */}
+        <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px', gap: '12px', background: '#ffffff' }}>
           
-          {/* Animated Page Loading Bar */}
-          {isLoadingPage && (
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '2px',
-              background: 'linear-gradient(90deg, #00ff88, #818cf8)',
-              animation: 'liquid-sheen-sweep 1s infinite linear'
-            }} />
-          )}
-
           {/* Navigation Controls */}
           <div style={{ display: 'flex', gap: '4px' }}>
-            <button className="btn-ghost" style={{ padding: '6px' }} title="Back">
+            <button style={{ background: 'none', border: 'none', color: '#71717a', cursor: 'pointer', padding: '6px', borderRadius: '4px' }}>
               <ArrowLeft size={16} />
             </button>
-            <button className="btn-ghost" style={{ padding: '6px' }} title="Forward">
+            <button style={{ background: 'none', border: 'none', color: '#71717a', cursor: 'pointer', padding: '6px', borderRadius: '4px' }}>
               <ArrowRightIcon size={16} />
             </button>
-            <button onClick={handleNavigate} className="btn-ghost" style={{ padding: '6px' }} title="Reload Chromium Stream">
-              <RotateCw size={16} className={isLoadingPage ? 'glow-pulse' : ''} />
+            <button onClick={handleNavigate} style={{ background: 'none', border: 'none', color: '#71717a', cursor: 'pointer', padding: '6px', borderRadius: '4px' }}>
+              <RotateCw size={16} />
             </button>
           </div>
 
-          {/* Omnibox Address Input Bar */}
+          {/* Clean Omnibox Address Input Bar */}
           <form onSubmit={handleNavigate} style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
             <div style={{
               width: '100%',
               display: 'flex',
               alignItems: 'center',
-              background: '#060609',
-              border: '1px solid rgba(0, 255, 136, 0.35)',
+              background: '#f4f4f5',
+              border: '1px solid #e4e4e7',
               borderRadius: '8px',
               padding: '6px 14px',
-              gap: '10px',
-              boxShadow: '0 0 16px rgba(0, 255, 136, 0.12)'
+              gap: '10px'
             }}>
-              <Lock size={14} style={{ color: '#00ff88' }} />
+              <Lock size={14} style={{ color: '#10b981' }} />
               <input
                 type="text"
                 value={inputUrl}
                 onChange={(e) => setInputUrl(e.target.value)}
-                style={{ flex: 1, background: 'transparent', border: 'none', color: '#fff', fontSize: '0.86rem', outline: 'none' }}
-                className="mono"
+                style={{ flex: 1, background: 'transparent', border: 'none', color: '#18181b', fontSize: '0.86rem', outline: 'none' }}
                 placeholder="Search or enter web address..."
               />
-              <span className="mono" style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)' }}>
-                Chromium Proxy Active
-              </span>
+              
+              {/* Trademark Ad Blocker Shield Badge (Brave Shield Style - 100% Free) */}
+              <button
+                type="button"
+                onClick={() => setShieldEnabled(!shieldEnabled)}
+                style={{
+                  background: shieldEnabled ? 'rgba(16, 185, 129, 0.12)' : '#e4e4e7',
+                  color: shieldEnabled ? '#10b981' : '#71717a',
+                  border: 'none',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                <ShieldCheck size={12} />
+                <span>{shieldEnabled ? `${blockedAdsCount.toLocaleString()} Blocked` : 'Shield Off'}</span>
+              </button>
+
+              {/* Encrypted VPN Tunnel Toggle */}
+              <button
+                type="button"
+                onClick={() => setVpnEnabled(!vpnEnabled)}
+                style={{
+                  background: vpnEnabled ? 'rgba(99, 102, 241, 0.12)' : '#e4e4e7',
+                  color: vpnEnabled ? '#6366f1' : '#71717a',
+                  border: 'none',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                {vpnEnabled ? '🔒 VPN Active' : 'VPN Off'}
+              </button>
             </div>
           </form>
 
-          {/* Quick Preset Websites Selector */}
-          <div style={{ display: 'flex', gap: '6px' }}>
-            {PRESET_WEBSITES.map(p => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  setInputUrl(p.url);
-                  setActiveTargetUrl(p.url);
-                }}
-                className="btn-ghost"
-                style={{ fontSize: '0.76rem', padding: '4px 10px' }}
-              >
-                <span>{p.favicon}</span>
-                <span style={{ marginLeft: '4px' }}>{p.title.split(' ')[0]}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* AI Sidebar Toggle (Dia / Strawberry Companion Button) */}
+          {/* Reader Mode Toggle */}
           <button
-            onClick={() => setSidebarOpen(prev => !prev)}
-            className="btn-clean"
+            onClick={() => setReaderMode(!readerMode)}
             style={{
+              background: readerMode ? '#18181b' : 'transparent',
+              color: readerMode ? '#ffffff' : '#71717a',
+              border: '1px solid #e4e4e7',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <BookOpen size={14} />
+            <span>Reader</span>
+          </button>
+
+          {/* AI Sidebar Toggle Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            style={{
+              background: sidebarOpen ? '#18181b' : '#ffffff',
+              color: sidebarOpen ? '#ffffff' : '#18181b',
+              border: '1px solid #e4e4e7',
               padding: '6px 14px',
-              fontSize: '0.8rem',
-              background: sidebarOpen ? '#00ff88' : 'rgba(0, 255, 136, 0.15)',
-              color: sidebarOpen ? '#000' : '#00ff88',
-              fontWeight: 700
+              borderRadius: '6px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
           >
             <Sparkles size={14} />
-            <span>{sidebarOpen ? 'Olym AI Active' : 'Open Olym AI'}</span>
+            <span>Olym AI</span>
           </button>
         </div>
 
       </header>
 
-      {/* 2. MAIN BROWSER VIEWPORT & AI SIDEBAR LAYOUT */}
+      {/* 2. MAIN BROWSER VIEWPORT & CLEAN NEW TAB HOME SCREEN */}
       <div style={{ flex: 1, display: 'flex', position: 'relative', overflow: 'hidden' }}>
         
-        {/* LEFT / CENTER: UNBLOCKED CHROMIUM PROXY LIVE WEB VIEWPORT */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#000', position: 'relative' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', position: 'relative' }}>
           
-          {/* Top Viewport Status Bar */}
-          <div style={{ background: '#09090e', padding: '6px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.74rem', color: 'var(--text-muted)' }} className="mono">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="glow-pulse" style={{ color: '#00ff88' }}>● Chromium Unblocked Proxy Stream</span>
-              <span>•</span>
-              <span style={{ color: '#38bdf8' }}>X-Frame-Options Bypassed</span>
-              <span>•</span>
-              <span>120 FPS WebGPU Renderer</span>
-            </div>
-            <div>
-              Target: <strong style={{ color: '#fff' }}>{activeTargetUrl}</strong>
-            </div>
-          </div>
+          {/* A. NEW TAB HOME SCREEN */}
+          {activeTargetUrl === 'olym://home' ? (
+            <div style={{ flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', maxWidth: '960px', margin: '0 auto', width: '100%' }}>
+              
+              {/* Logo & Clean Greeting */}
+              <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#f4f4f5', padding: '6px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 600, color: '#18181b', marginBottom: '16px' }}>
+                  <Sparkles size={14} style={{ color: '#10b981' }} />
+                  <span>Olym Browser — Open-Source & Privacy First</span>
+                </div>
+                <h1 style={{ fontSize: '2.8rem', fontWeight: 800, color: '#18181b', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+                  Good Afternoon, Sarvan
+                </h1>
+                <p style={{ color: '#71717a', fontSize: '1.05rem' }}>
+                  What would you like to build or research today?
+                </p>
+              </div>
 
-          {/* Interactive Web Page Viewport with Proxied Stream */}
-          <div style={{ flex: 1, position: 'relative', background: '#ffffff' }}>
-            <iframe
-              src={proxiedIframeSrc}
-              title="Olym Chromium Browser Viewport"
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                background: '#ffffff'
-              }}
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-            />
-          </div>
+              {/* Large Search Bar */}
+              <form onSubmit={handleNavigate} style={{ width: '100%', maxWidth: '640px', marginBottom: '40px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: '#ffffff',
+                  border: '1px solid #e4e4e7',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.06)',
+                  borderRadius: '14px',
+                  padding: '12px 20px',
+                  gap: '12px'
+                }}>
+                  <Search size={18} style={{ color: '#71717a' }} />
+                  <input
+                    type="text"
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value)}
+                    placeholder="Search Google, DuckDuckGo, or enter URL..."
+                    style={{ flex: 1, background: 'transparent', border: 'none', fontSize: '1rem', color: '#18181b', outline: 'none' }}
+                  />
+                  <button type="submit" style={{ background: '#18181b', color: '#ffffff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer' }}>
+                    Search
+                  </button>
+                </div>
+              </form>
+
+              {/* Shortcut Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '16px', width: '100%', maxWidth: '640px', marginBottom: '40px' }}>
+                {SHORTCUTS.map(sc => (
+                  <div
+                    key={sc.id}
+                    onClick={() => {
+                      setInputUrl(sc.url);
+                      setActiveTargetUrl(sc.url);
+                    }}
+                    style={{
+                      background: '#fafafa',
+                      border: '1px solid #e4e4e7',
+                      borderRadius: '12px',
+                      padding: '16px 12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.6rem' }}>{sc.icon}</span>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#18181b' }}>{sc.title}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Trademark Shield Stats Widget */}
+              <div style={{ background: '#fafafa', border: '1px solid #e4e4e7', borderRadius: '12px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '640px' }}>
+                <div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <ShieldCheck size={16} />
+                    <span>OLYM PRIVACY SHIELD ACTIVE</span>
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: '#71717a', marginTop: '2px' }}>
+                    Ads, trackers, and telemetry blocked locally in your browser.
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '20px', textAlign: 'right' }}>
+                  <div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#18181b' }}>{blockedAdsCount.toLocaleString()}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#71717a' }}>Trackers Blocked</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#6366f1' }}>{dataSavedMB} MB</div>
+                    <div style={{ fontSize: '0.72rem', color: '#71717a' }}>Data Saved</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          ) : (
+            /* B. PROXIED LIVE WEB VIEWPORT */
+            <div style={{ flex: 1, position: 'relative', background: '#ffffff' }}>
+              <iframe
+                src={proxiedIframeSrc}
+                title="Olym Clean Web Viewport"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  background: '#ffffff'
+                }}
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+              />
+            </div>
+          )}
 
         </div>
 
-        {/* RIGHT: DIA & STRAWBERRY COMPETITOR AI SIDEBAR COMPANION */}
+        {/* RIGHT: CLEAN ARC / DIA STYLE AI COMPANION SIDEBAR */}
         {sidebarOpen && (
           <aside style={{
-            width: '420px',
-            background: '#0d0d14',
-            borderLeft: '1px solid var(--border)',
+            width: '380px',
+            background: '#ffffff',
+            borderLeft: '1px solid #e4e4e7',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
             zIndex: 10
           }}>
             
-            {/* Sidebar Navigation Tabs */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: '#060609' }}>
-              <button
-                onClick={() => setSidebarMode('assistant')}
-                className={`btn-ghost ${sidebarMode === 'assistant' ? 'active' : ''}`}
-                style={{ flex: 1, borderRadius: 0, padding: '10px', fontSize: '0.78rem', justifyContent: 'center' }}
-              >
-                <Sparkles size={14} style={{ color: sidebarMode === 'assistant' ? '#00ff88' : 'var(--text-muted)' }} />
-                <span>Ask Olym</span>
-              </button>
-
-              <button
-                onClick={() => setSidebarMode('skills')}
-                className={`btn-ghost ${sidebarMode === 'skills' ? 'active' : ''}`}
-                style={{ flex: 1, borderRadius: 0, padding: '10px', fontSize: '0.78rem', justifyContent: 'center' }}
-              >
-                <Zap size={14} style={{ color: sidebarMode === 'skills' ? '#00ff88' : 'var(--text-muted)' }} />
-                <span>Skills</span>
-              </button>
-
-              <button
-                onClick={() => setSidebarMode('inspector')}
-                className={`btn-ghost ${sidebarMode === 'inspector' ? 'active' : ''}`}
-                style={{ flex: 1, borderRadius: 0, padding: '10px', fontSize: '0.78rem', justifyContent: 'center' }}
-              >
-                <Eye size={14} style={{ color: sidebarMode === 'inspector' ? '#00ff88' : 'var(--text-muted)' }} />
-                <span>DOM</span>
-              </button>
-
-              <button
-                onClick={() => setSidebarMode('deliverables')}
-                className={`btn-ghost ${sidebarMode === 'deliverables' ? 'active' : ''}`}
-                style={{ flex: 1, borderRadius: 0, padding: '10px', fontSize: '0.78rem', justifyContent: 'center' }}
-              >
-                <FileText size={14} style={{ color: sidebarMode === 'deliverables' ? '#00ff88' : 'var(--text-muted)' }} />
-                <span>Output</span>
-              </button>
-            </div>
-
-            {/* TAB CONTENT 1: Ask Olym AI Chat Companion */}
-            {sidebarMode === 'assistant' && (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', overflow: 'hidden' }}>
-                <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '14px' }}>
-                  {chatMessages.map((msg, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                        background: msg.sender === 'user' ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                        border: msg.sender === 'user' ? '1px solid rgba(0, 255, 136, 0.4)' : '1px solid var(--border)',
-                        padding: '10px 14px',
-                        borderRadius: '10px',
-                        fontSize: '0.84rem',
-                        maxWidth: '90%',
-                        color: msg.sender === 'user' ? '#00ff88' : '#fafafa',
-                        lineHeight: 1.5,
-                        whiteSpace: 'pre-wrap'
-                      }}
-                    >
-                      {msg.text}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Prompt Input Form */}
-                <form onSubmit={handleSendPrompt} style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    type="text"
-                    value={userPrompt}
-                    onChange={(e) => setUserPrompt(e.target.value)}
-                    placeholder="Ask Olym about this page..."
-                    style={{ flex: 1, background: '#040406', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '8px', color: '#fff', fontSize: '0.84rem', outline: 'none' }}
-                  />
-                  <button type="submit" className="btn-clean" style={{ background: '#00ff88', color: '#000', padding: '10px 16px', fontWeight: 700 }}>
-                    Send
-                  </button>
-                </form>
+            {/* Clean Sidebar Header */}
+            <div style={{ padding: '16px', borderBottom: '1px solid #e4e4e7', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#18181b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={16} style={{ color: '#10b981' }} />
+                <span>Olym AI Companion</span>
               </div>
-            )}
 
-            {/* TAB CONTENT 2: Role Skills Runner */}
-            {sidebarMode === 'skills' && (
-              <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 600 }}>
-                  EXECUTE SKILL ON ACTIVE CHROMIUM STREAM
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {SKILL_ROLES.map(roleGroup => (
-                    <div key={roleGroup.role} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px' }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fff', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <roleGroup.icon size={14} style={{ color: '#00ff88' }} />
-                        <span>{roleGroup.role}</span>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {roleGroup.skills.map(skill => (
-                          <div
-                            key={skill.id}
-                            onClick={() => setSelectedSkill(skill)}
-                            style={{
-                              padding: '8px 10px',
-                              borderRadius: '4px',
-                              border: selectedSkill.id === skill.id ? '1px solid #00ff88' : '1px solid transparent',
-                              background: selectedSkill.id === skill.id ? 'rgba(0, 255, 136, 0.12)' : 'transparent',
-                              cursor: 'pointer',
-                              fontSize: '0.78rem'
-                            }}
-                          >
-                            <div style={{ fontWeight: 600, color: selectedSkill.id === skill.id ? '#00ff88' : '#e4e4e7' }}>{skill.title}</div>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{skill.desc}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={handleRunSkill}
-                  disabled={isRunningSkill}
-                  className="btn-clean"
-                  style={{ background: '#00ff88', color: '#000', padding: '12px', width: '100%', justifyContent: 'center', fontWeight: 700, marginTop: 'auto' }}
-                >
-                  <Play size={16} />
-                  <span>{isRunningSkill ? 'Running Skill...' : `Run ${selectedSkill.title}`}</span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button onClick={() => setSidebarMode('assistant')} style={{ background: sidebarMode === 'assistant' ? '#f4f4f5' : 'transparent', border: 'none', padding: '4px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+                  Chat
+                </button>
+                <button onClick={() => setSidebarMode('skills')} style={{ background: sidebarMode === 'skills' ? '#f4f4f5' : 'transparent', border: 'none', padding: '4px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+                  Skills
                 </button>
               </div>
-            )}
+            </div>
 
-            {/* TAB CONTENT 3: DOM & Page Inspector */}
-            {sidebarMode === 'inspector' && (
-              <div style={{ flex: 1, padding: '16px', overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#a1a1aa' }}>
-                <div style={{ color: '#00ff88', fontWeight: 600, marginBottom: '10px' }}>
-                  [ UNBLOCKED CHROMIUM DOM STREAM ]
-                </div>
-                <div style={{ background: '#040406', padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', lineHeight: 1.5 }}>
-                  <div>Target Stream: {activeTargetUrl}</div>
-                  <div>Proxied Route: /api/proxy?url=...</div>
-                  <div>Status: 200 OK (X-Frame-Options Stripped)</div>
-                  <div style={{ marginTop: '10px', color: '#fff' }}>Extracted Headings:</div>
-                  <div style={{ color: '#818cf8' }}>• H1: {activeTab.title}</div>
-                  <div style={{ color: '#818cf8' }}>• Form Login Inputs: Unblocked & Interactive</div>
-                </div>
+            {/* Sidebar Body */}
+            <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ background: '#f4f4f5', padding: '12px', borderRadius: '8px', fontSize: '0.84rem', color: '#18181b', lineHeight: 1.5 }}>
+                👋 Hi Sarvan! I am Olym AI. I monitor active web pages, execute role skills, and protect your privacy locally.
               </div>
-            )}
 
-            {/* TAB CONTENT 4: Finished Deliverables */}
-            {sidebarMode === 'deliverables' && (
-              <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }}>
-                <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 600, marginBottom: '12px' }}>
-                  GENERATED DELIVERABLES
-                </div>
-
-                {generatedArtifact ? (
-                  <div style={{ background: '#040406', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
-                    <div style={{ fontWeight: 700, color: '#00ff88', marginBottom: '8px', fontSize: '0.9rem' }}>{generatedArtifact.title}</div>
-                    <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginBottom: '12px' }} className="mono">Generated on {generatedArtifact.date}</div>
-                    <pre style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#e4e4e7', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                      {generatedArtifact.content}
-                    </pre>
-                  </div>
-                ) : (
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    No deliverable generated yet. Run a skill to create HTML reports, slide decks, and CSV datasets.
-                  </div>
-                )}
+              <div style={{ background: '#fafafa', border: '1px solid #e4e4e7', padding: '12px', borderRadius: '8px', fontSize: '0.8rem', color: '#71717a' }}>
+                Active Target: <strong>{activeTargetUrl}</strong>
               </div>
-            )}
+            </div>
 
           </aside>
         )}
