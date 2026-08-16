@@ -2,145 +2,418 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Olym AI Side Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olym AI Companion — Apple Edition</title>
   <style>
-    body {
-      margin: 0;
-      padding: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #09090d;
-      color: #fafafa;
-      height: 100vh;
+    :root {
+      --bg: #000000;
+      --card-bg: rgba(28, 28, 30, 0.75);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #f2f2f7;
+      --text-muted: #8e8e93;
+      --accent: #30d158;
+      --accent-blue: #0a84ff;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Monaco, monospace;
+    }
+
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
+
+    /* Apple Glass Header */
     .header {
+      background: rgba(28, 28, 30, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #27272a;
-      padding-bottom: 12px;
-      margin-bottom: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .title {
-      font-weight: 800;
-      color: #00ff88;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
       font-size: 0.95rem;
+      letter-spacing: -0.01em;
     }
-    .card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid #27272a;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      font-size: 0.82rem;
-      line-height: 1.4;
+
+    .brand-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #30d158, #0a84ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 900;
+      font-size: 0.75rem;
     }
-    .chat-box {
+
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      background: rgba(48, 209, 88, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(48, 209, 88, 0.3);
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    /* Segmented Navigation Bar */
+    .segmented-bar {
+      display: flex;
+      background: rgba(118, 118, 128, 0.24);
+      padding: 2px;
+      border-radius: 9px;
+      margin: 12px 16px 8px;
+    }
+
+    .segmented-btn {
       flex: 1;
-      background: #040406;
-      border: 1px solid #27272a;
-      border-radius: 8px;
-      padding: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .segmented-btn.active {
+      background: #636366;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Main Container */
+    .content {
+      flex: 1;
+      padding: 12px 16px 16px;
       overflow-y: auto;
-      margin-bottom: 12px;
-      font-size: 0.82rem;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 14px;
     }
-    .msg {
-      padding: 8px 10px;
-      border-radius: 6px;
+
+    /* Glass Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-    .msg-user {
-      background: rgba(0, 255, 136, 0.15);
-      color: #00ff88;
-      align-self: flex-end;
-    }
-    .msg-olym {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fafafa;
-      align-self: flex-start;
-    }
-    .input-row {
-      display: flex;
-      gap: 6px;
-    }
-    input {
-      flex: 1;
-      background: #040406;
-      border: 1px solid #27272a;
-      padding: 8px 12px;
-      border-radius: 6px;
-      color: #fff;
+
+    .card-title {
       font-size: 0.82rem;
-      outline: none;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    button {
-      background: #00ff88;
-      color: #000;
+
+    /* Primary Action Buttons */
+    .btn-apple {
+      width: 100%;
+      background: linear-gradient(180deg, #30d158 0%, #28cd41 100%);
+      color: #000000;
       border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      box-shadow: 0 4px 16px rgba(48, 209, 88, 0.25);
+    }
+
+    .btn-apple:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Grid Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* File List Explorer */
+    .file-tree {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .file-item {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      color: #e4e4e7;
+    }
+
+    .file-item:hover {
+      border-color: var(--accent-blue);
+    }
+
+    /* Code View Area */
+    .code-box {
+      background: #040406;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: #a1a1aa;
+      white-space: pre-wrap;
+      max-height: 220px;
+      overflow-y: auto;
+      user-select: text;
+    }
+
+    /* AI Chat / Prompt Inputs */
+    .prompt-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: var(--font);
+      font-size: 0.84rem;
+      outline: none;
+      margin-bottom: 8px;
+    }
+
+    .prompt-input:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .quick-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .tag:hover {
+      background: rgba(10, 132, 255, 0.2);
+      border-color: var(--accent-blue);
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">✦ Olym AI Companion</div>
-    <div style="font-size: 0.72rem; color: #a1a1aa;">Chrome Side Panel</div>
-  </div>
 
-  <div class="card" id="pageContextCard">
-    <strong>Active Context:</strong> <span id="activeUrl">Loading DOM context...</span>
-  </div>
-
-  <div class="chat-box" id="chatBox">
-    <div class="msg msg-olym">
-      Hi! I am Olym AI companion running directly in your browser. Ask me anything about this page or execute a skill.
+  <!-- Apple Header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">✦</div>
+      <span>Olym AI Companion</span>
     </div>
+    <div class="status-pill" id="statusPill">M5 Ready</div>
+  </header>
+
+  <!-- Segmented Navigation -->
+  <div class="segmented-bar">
+    <button class="segmented-btn active" id="tabScraper">🕸️ Scraper</button>
+    <button class="segmented-btn" id="tabAI">🤖 Gemini AI</button>
+    <button class="segmented-btn" id="tabKey">🔑 API Key</button>
   </div>
 
-  <form class="input-row" id="chatForm">
-    <input type="text" id="promptInput" placeholder="Ask Olym about this page..." />
-    <button type="submit">Send</button>
-  </form>
+  <!-- Content Container -->
+  <main class="content">
 
-  <script>
-    const chatBox = document.getElementById('chatBox');
-    const promptInput = document.getElementById('promptInput');
-    const activeUrl = document.getElementById('activeUrl');
+    <!-- VIEW 1: SITE SCRAPER ENGINE -->
+    <div id="viewScraper" style="display: flex; flex-direction: column; gap: 14px;">
+      
+      <div class="card">
+        <div class="card-title">
+          <span>Complete Website Scraper</span>
+          <span style="color: var(--accent-blue); cursor: pointer;" id="exportJsonBtn">Export JSON</span>
+        </div>
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        activeUrl.innerText = tabs[0].url;
-      }
-    });
+        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
+          Extracts full HTML source, linked CSS stylesheets, JS scripts, inline code, and media assets from the active web page.
+        </p>
 
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = promptInput.value.trim();
-      if (!text) return;
+        <button class="btn-apple" id="scrapeBtn">
+          <span>⚡ Scrape Complete Website</span>
+        </button>
 
-      const userMsg = document.createElement('div');
-      userMsg.className = 'msg msg-user';
-      userMsg.innerText = text;
-      chatBox.appendChild(userMsg);
+        <!-- Scrape Metrics -->
+        <div class="metrics-grid" id="metricsGrid" style="display: none;">
+          <div class="metric-box">
+            <div class="metric-value" id="mHtmlBytes">0 KB</div>
+            <div class="metric-label">HTML Payload</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" id="mJsCount">0 Files</div>
+            <div class="metric-label">JS Scripts</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" id="mCssCount">0 Files</div>
+            <div class="metric-label">CSS Stylesheets</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" id="mAssetCount">0 Assets</div>
+            <div class="metric-label">Media Assets</div>
+          </div>
+        </div>
+      </div>
 
-      promptInput.value = '';
+      <!-- Scraped File Explorer -->
+      <div class="card" id="fileExplorerCard" style="display: none;">
+        <div class="card-title">Scraped Code Files</div>
+        <div class="file-tree" id="fileTree"></div>
+      </div>
 
-      setTimeout(() => {
-        const olymMsg = document.createElement('div');
-        olymMsg.className = 'msg msg-olym';
-        olymMsg.innerText = `Analyzing DOM tree for ${activeUrl.innerText}...\n\nFound key content nodes. Executed skill task for "${text}".`;
-        chatBox.appendChild(olymMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }, 600);
-    });
-  </script>
+      <!-- Code Inspector Viewer -->
+      <div class="card" id="codeViewerCard" style="display: none;">
+        <div class="card-title" id="codeViewerTitle">Selected File Preview</div>
+        <div class="code-box" id="codeViewerText">Click a file above to inspect code...</div>
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: GEMINI AI REASONING ENGINE -->
+    <div id="viewAI" style="display: none; flex-direction: column; gap: 14px;">
+      
+      <div class="card">
+        <div class="card-title">Gemini AI Code & Asset Auditor</div>
+
+        <div class="quick-tags">
+          <span class="tag" id="tagAudit">🔍 Audit Security</span>
+          <span class="tag" id="tagEndpoints">⚡ Extract APIs</span>
+          <span class="tag" id="tagTokens">🎨 Design Tokens</span>
+          <span class="tag" id="tagRefactor">🛠️ Refactor Logic</span>
+        </div>
+
+        <textarea class="prompt-input" id="aiPromptInput" rows="3" placeholder="Ask Gemini AI to analyze, refactor, or extract logic from the scraped website..."></textarea>
+
+        <button class="btn-apple" id="runAiBtn">
+          <span>✦ Analyze with Gemini AI</span>
+        </button>
+      </div>
+
+      <!-- AI Response Output -->
+      <div class="card" id="aiOutputCard" style="display: none;">
+        <div class="card-title">Gemini AI Intelligence Report</div>
+        <div class="code-box" id="aiOutputText">Analyzing codebase...</div>
+      </div>
+
+    </div>
+
+    <!-- VIEW 3: API KEY SETTINGS -->
+    <div id="viewKey" style="display: none; flex-direction: column; gap: 14px;">
+      
+      <div class="card">
+        <div class="card-title">Gemini API Key Configuration</div>
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.4, marginBottom: '12px' }}>
+          Enter your Gemini API key to enable live AI code analysis, script refactoring, and security auditing on scraped websites.
+        </p>
+
+        <input type="password" class="prompt-input" id="apiKeyInput" placeholder="Paste your Gemini API key (AIzaSy...)" />
+
+        <button class="btn-apple" id="saveKeyBtn" style="background: var(--accent-blue);">
+          <span>Save API Key</span>
+        </button>
+
+        <div style="font-size: 0.74rem; color: var(--accent); margin-top: 10px; display: none;" id="keySavedMsg">
+          ✓ API Key saved securely in local storage.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="sidepanel.js"></script>
 </body>
 </html>
