@@ -5,17 +5,17 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>Olym AI Web Browser</string>
+    <string>Olym AI Browser (M5 Edition)</string>
     <key>CFBundleExecutable</key>
     <string>Olym-Browser</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.olym.browser</string>
+    <string>com.olym.browser.m5</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>Olym Browser</string>
+    <string>Olym Browser M5</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

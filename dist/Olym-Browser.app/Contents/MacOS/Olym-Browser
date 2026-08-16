@@ -1,12 +1,12 @@
 #!/bin/bash
-# Olym Native macOS Application Launcher
+# Olym Native macOS Launcher for Apple M5 Series Chips
 
 URL="http://localhost:3001/olym"
 
 if [ -d "/Applications/Google Chrome.app" ]; then
-    open -a "/Applications/Google Chrome.app" --args --app="$URL" --user-data-dir="$HOME/Library/Application Support/OlymBrowserProfile"
+    open -a "/Applications/Google Chrome.app" --args --app="$URL" --user-data-dir="$HOME/Library/Application Support/OlymBrowserProfileM5"
 elif [ -d "/Applications/Chromium.app" ]; then
-    open -a "/Applications/Chromium.app" --args --app="$URL" --user-data-dir="$HOME/Library/Application Support/OlymBrowserProfile"
+    open -a "/Applications/Chromium.app" --args --app="$URL" --user-data-dir="$HOME/Library/Application Support/OlymBrowserProfileM5"
 else
     open "$URL"
 fi
