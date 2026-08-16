@@ -1,0 +1,14 @@
+name = "omniforge-studio"
+main = "worker.js"
+compatibility_date = "2026-08-16"
+
+# Cloudflare Subdomain Route Configuration
+routes = [
+  { pattern = "studio.omniforge.dev/*", zone_name = "omniforge.dev" },
+  { pattern = "omniforge.dev/*", zone_name = "omniforge.dev" }
+]
+
+[vars]
+ENVIRONMENT = "production"
+DOWNLOADS_ENABLED = "false"
+NEXT_PUBLIC_APP_URL = "https://studio.omniforge.dev"

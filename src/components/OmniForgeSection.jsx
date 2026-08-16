@@ -32,10 +32,10 @@ export default function OmniForgeSection() {
   // Terminal Shell State
   const [terminalInput, setTerminalInput] = useState('');
   const [terminalLogs, setTerminalLogs] = useState([
-    { type: 'sys', text: '✦ OmniForge Terminal & Automator CLI v1.0.0' },
+    { type: 'sys', text: '✦ OmniForge Terminal & Automator CLI v1.0.0 (Cloudflare Edge Edition)' },
     { type: 'sys', text: 'Type "help" to list available commands (scrape, git, ai, build, automator, clear).' },
     { type: 'prompt', text: 'omniforge@studio:~$ status' },
-    { type: 'out', text: '● OmniForge System Engine: ACTIVE (Apple M5 & WebGPU Hardware Accelerated)' }
+    { type: 'out', text: '● OmniForge Cloud Subdomain: ACTIVE (studio.omniforge.dev)\n🔒 Public Downloads: DISABLED by Admin' }
   ]);
   const terminalEndRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function OmniForgeSection() {
         text: `Available OmniForge CLI Commands:\n  - help                    List CLI commands\n  - status                  Check system & hardware status\n  - scrape <url>            Scrape website HTML, JS, CSS & APIs\n  - git pull | push | status Direct Git repository commands\n  - ai <prompt>             Run Gemini AI code reasoning engine\n  - build                   Run Next.js production build\n  - run <pipeline_id>       Execute automated pipeline\n  - clear                   Clear terminal log buffer`
       });
     } else if (lower === 'status') {
-      newLogs.push({ type: 'out', text: '● OmniForge Engine: ACTIVE\n● Git Branch: main (up to date with origin/main)\n● Hardware: Apple M5 WebGPU Stream Enabled' });
+      newLogs.push({ type: 'out', text: '● OmniForge Engine: ACTIVE\n● Cloudflare Subdomain: studio.omniforge.dev\n🔒 Downloads: DISABLED' });
     } else if (lower.startsWith('scrape')) {
       const url = cmd.split(' ')[1] || 'https://news.ycombinator.com';
       newLogs.push({ type: 'out', text: `⚡ Scraping site assets for ${url}...\n✓ HTML payload: 48 KB\n✓ Extracted 6 JS scripts & 4 CSS stylesheets\n✓ Found 18 API routes.` });
@@ -127,13 +127,13 @@ export default function OmniForgeSection() {
             </div>
             <span className="mono" style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <TerminalIcon size={16} style={{ color: '#00ff88' }} />
-              OmniForge CLI Terminal & Automator (Supercell & October Engine)
+              OmniForge Developer Studio — Cloudflare Subdomain (studio.omniforge.dev)
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="mono" style={{ fontSize: '0.74rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(0, 255, 136, 0.3)' }}>
-              AUTOMATOR: ONLINE
+            <span className="mono" style={{ fontSize: '0.74rem', color: '#ef4444', background: 'rgba(239, 68, 68, 0.12)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+              🔒 DOWNLOADS DISABLED
             </span>
             <Link href="/" className="btn-ghost" style={{ fontSize: '0.76rem', padding: '4px 10px' }}>
               ← Exit Studio
@@ -183,6 +183,15 @@ export default function OmniForgeSection() {
               <span>4. Git Repo Studio</span>
             </button>
 
+            {/* Disabled Download Badge */}
+            <button
+              disabled={true}
+              className="btn-ghost"
+              style={{ fontSize: '0.8rem', padding: '6px 14px', background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#ef4444', opacity: 0.7, cursor: 'not-allowed', marginLeft: 'auto' }}
+            >
+              <Lock size={14} />
+              <span>Downloads Disabled</span>
+            </button>
           </div>
 
           {/* TAB 1: INTERACTIVE CLI TERMINAL CONSOLE */}
@@ -293,7 +302,7 @@ export default function OmniForgeSection() {
           {/* TAB 3: CODE EDITOR */}
           {activeTab === 'editor' && (
             <div style={{ flex: 1, padding: '24px', color: '#fff' }} className="mono">
-              Code Editor Active. Use CLI Terminal or Automator for fast engineering tasks.
+              Code Editor Active. Public file downloads disabled.
             </div>
           )}
 
