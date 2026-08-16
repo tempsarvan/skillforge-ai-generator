@@ -4,7 +4,6 @@
 
 URL="http://localhost:3001/olym"
 
-# Detect installed Chromium or Google Chrome on macOS
 if [ -d "/Applications/Google Chrome.app" ]; then
     open -a "/Applications/Google Chrome.app" --args --app="$URL" --user-data-dir="$HOME/Library/Application Support/OlymBrowserProfile"
 elif [ -d "/Applications/Chromium.app" ]; then
