@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import AsciiBackgroundCanvas from '@/components/AsciiBackgroundCanvas';
-import { Cpu, Terminal, Copy, Download, Check, Sparkles, Sliders, Shield, Zap, Layers, RefreshCw, FileText, ArrowRight, Save, Play, Activity, Share2, Code, Calculator, Eye, Award, SlidersHorizontal, TerminalSquare, Box, Radio, CheckCircle, Flame, Droplet } from 'lucide-react';
+import { Cpu, Terminal, Copy, Download, Check, Sparkles, Sliders, Shield, Zap, Layers, RefreshCw, FileText, ArrowRight, Save, Play, Activity, Share2, Code, Calculator, Eye, Award, SlidersHorizontal, TerminalSquare, Box, Radio, CheckCircle, Flame, Droplet, Bug, Server, LayoutGrid, Globe, Monitor, Laptop } from 'lucide-react';
 
 const AI_ENGINES = [
   { id: 'gemini', name: 'Gemini 1.5 Pro / Flash', badge: 'Google AI', icon: Sparkles, asciiName: 'GEMINI-1.5' },
@@ -14,49 +14,176 @@ const AI_ENGINES = [
   { id: 'custom', name: 'Custom LLM Framework', badge: 'Open Source', icon: Terminal, asciiName: 'CUSTOM-LLM' }
 ];
 
-const SKILL_TEMPLATES = [
+export const WORLD_CHANGING_SKILLS = [
   {
     id: 'overnight-app-forge',
     title: 'Overnight App Forge',
     category: 'Neural Refactoring',
     desc: 'Unattended neural improvement loop with loss evaluation & backpropagation edge weight updates.',
-    icon: Sparkles
+    icon: Sparkles,
+    baseTokens: 340,
+    agentMultiplier: 24,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: overnight-app-forge
+description: >
+  Token-minified ${engine} protocol for ${title}.
+  Evaluates delta loss L=Σ(w_r*Reg)-Σ(w_i*Imp) on isolated branch checkpoints.
+  Updates edge weights matrix W via backprop ΔW=η*|L|. Coordinates ${maxAgents} sub-agents.
+---
+
+# ${title} — ${engine} Protocol
+
+## 0. Hard Gates & Branch Isolation
+- Branch: \`git checkout -b forge/\${timestamp}\`
+- Protected: \`.env\`, secrets, prod configs, data-dropping migrations.
+- Baseline: capture S_0=[S_lint, S_type, S_test, S_a11y, S_perf] normalized to [0,1]. Write to \`report/baseline.json\`. Initialize \`weights.json\` W_0=1.0.
+
+## 1. Task Fan-Out (${maxAgents} Sub-Agents Allocated)
+Distribute disjoint files across ${maxAgents} domain sub-agent worker slots:
+${Array.from({ length: maxAgents }, (_, i) => `${i + 1}. WorkerDomain_${i + 1}`).join(' ')}
+
+## 2. Neural Improvement Loop (Cycle k)
+For target t:
+1. **Forward Pass**: P_j=σ(Σ W_ij*(1-S_i)), A_k=Σ W_jk*P_j*Conf_k. Execute top action A_k on checkpoint.
+2. **Evaluate Loss**: L = Σ(w_m*Reg_m) - Σ(w_m*Imp_m).
+   - If L < 0 & no regression -> KEEP checkpoint.
+   - Else -> REVERT (\`git reset --hard\`).
+3. **Backprop Update**: ΔW = ${lr} * |L|.
+   - KEEP: W_{new} = W_{old} + ΔW
+   - REVERT: W_{new} = W_{old} - ΔW
+   - Decay: γ=0.95 on attempted paths to prevent looping.
+
+## 3. Merge & Verify
+Merge kept checkpoints. Run full verification. Gate: merged scores >= baseline. Otherwise bisect & revert.
+
+## 4. Report
+Write \`report/summary.md\` (delta table, wins, failed ideas log) and save updated \`weights.json\`.`
   },
   {
-    id: 'security-ast-auditor',
-    title: 'Security & AST Guard',
-    category: 'Security & Verification',
-    desc: 'Static analysis pipeline detecting SQL injection, unhandled promise rejections, and secret leakage.',
-    icon: Shield
+    id: 'break-testing-agent',
+    title: 'Break-Testing Agent',
+    category: 'Adversarial Chaos',
+    desc: 'Automated adversarial boundary fuzzing, memory stress testing, and edge-case break verification.',
+    icon: Bug,
+    baseTokens: 320,
+    agentMultiplier: 22,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: break-testing-agent
+description: >
+  Adversarial chaos & boundary break-testing agent using ${engine}.
+  Fuzzes input payloads, stress-tests memory leaks, injects fault states, and verifies zero unhandled crashes.
+---
+
+# Break-Testing Agent — ${engine} Adversarial Protocol
+
+## 0. Isolation & Fault Injection
+- Target: Execute fuzzing on isolated staging build.
+- Metrics: Crash Rate $C_{rate}$, Unhandled Promises $U_{err}$, Out-of-Memory $M_{oom}$.
+
+## 1. Multi-Agent Stress Fan-Out (${maxAgents} Sub-Agents)
+Allocating ${maxAgents} chaos agents across API bounds, null dereferences, concurrent race conditions, and heavy I/O loads.
+
+## 2. Adversarial Fuzzing Loop
+1. Generate boundary mutations: null bytes, 10MB payloads, infinite loop triggers.
+2. Monitor memory RSS and event loop lag.
+3. If crash detected: log exact stack trace, construct regression test case, and verify patch.`
   },
   {
-    id: 'a11y-auto-remediator',
-    title: 'A11y Auto-Remediator',
-    category: 'Accessibility & ARIA',
-    desc: 'WCAG 2.1 AAA automated audit fixing contrast, focus states, and screen reader labels.',
-    icon: Eye
+    id: 'design-system-architect',
+    title: 'Design System Architect',
+    category: 'Awwwards UI/UX',
+    desc: 'Autonomous design token standardization, glassmorphic palette generator, and visual contrast auditor.',
+    icon: LayoutGrid,
+    baseTokens: 310,
+    agentMultiplier: 20,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: design-system-architect
+description: >
+  Autonomous Awwwards-grade design token generator using ${engine}.
+  Standardizes CSS tokens, verifies WCAG contrast ratios, and refactors components to Liquid Glassmorphism.
+---
+
+# Design System Architect — ${engine} Aesthetic Engine
+
+## 0. Design System Baseline Audit
+- Tokens: Extract colors, typography tokens, border radii, and spatial grids.
+- Contrast Gate: Enforce WCAG 2.1 AAA contrast ratios ($> 4.5:1$ text, $> 3:1$ UI components).
+
+## 1. Component Refactoring Swarm (${maxAgents} Sub-Agents)
+Parallel design workers refactoring buttons, cards, typography, glassmorphism filters, and micro-animations.`
   },
   {
-    id: 'perf-bundle-pruner',
-    title: 'Performance & Bundle Pruner',
-    category: 'Performance Optimization',
-    desc: 'Tree-shaking, dead code elimination, dynamic imports, and LCP/INP render timing boost.',
-    icon: Zap
+    id: 'infrastructure-forge-agent',
+    title: 'Infrastructure Forge Agent',
+    category: 'DevOps & Cloud',
+    desc: 'Zero-downtime CI/CD pipeline optimizer, Docker multi-stage build shrinker, and cloud deployment engine.',
+    icon: Server,
+    baseTokens: 330,
+    agentMultiplier: 25,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: infrastructure-forge-agent
+description: >
+  Autonomous CI/CD & cloud infrastructure optimizer using ${engine}.
+  Minifies Docker build layers, automates zero-downtime blue/green deployments, and hardens Terraform configs.
+---
+
+# Infrastructure Forge Agent — ${engine} DevOps Protocol
+
+## 0. Pipeline & Container Audit
+- Target: Multi-stage Dockerfiles, GitHub Actions workflows, Kubernetes manifests.
+- Benchmark: Image size reduction, build layer caching speed, zero secret exposure.
+
+## 1. Swarm Execution (${maxAgents} Sub-Agents)
+Workers optimizing build caches, container security scanning, and automated rollback triggers.`
   },
   {
-    id: 'multi-agent-orchestrator',
-    title: 'Multi-Agent Orchestrator',
-    category: 'Agent Swarm Protocol',
-    desc: 'Leader-follower fanout protocol distributing tasks across 15 domain sub-agents in parallel.',
-    icon: Layers
+    id: 'backend-creator-agent',
+    title: 'Backend Creator Agent',
+    category: 'High-Throughput APIs',
+    desc: 'High-performance Node/Rust/Python API router generator, SQL query optimizer, and database architect.',
+    icon: Terminal,
+    baseTokens: 350,
+    agentMultiplier: 26,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: backend-creator-agent
+description: >
+  High-throughput API router and database architect using ${engine}.
+  Generates type-safe API endpoints, optimizes SQL query joins, and enforces connection pooling.
+---
+
+# Backend Creator Agent — ${engine} API Engine
+
+## 0. Architecture Verification
+- Enforce parameterized query protection (zero SQL injection).
+- Implement rate limiting, CORS headers, and JWT verification middleware.`
+  },
+  {
+    id: 'frontend-creator-agent',
+    title: 'Frontend Creator Agent',
+    category: 'React 19 & WebGPU',
+    desc: 'Next.js 15 App Router component architect, WebGPU shader integrator, and accessible UI builder.',
+    icon: Code,
+    baseTokens: 345,
+    agentMultiplier: 25,
+    generatorFunc: (title, engine, maxAgents, lr) => `---
+name: frontend-creator-agent
+description: >
+  Next.js 15 & WebGPU frontend architect using ${engine}.
+  Creates responsive, accessible UI components with Server Actions and WebGPU shader pipelines.
+---
+
+# Frontend Creator Agent — ${engine} UI Protocol
+
+## 0. Component Architecture
+- Use Next.js App Router conventions with React 19 Server Components.
+- Implement responsive breakpoints and ARIA accessibility labels.`
   }
 ];
 
 export default function StandaloneSkillForge() {
   const [selectedEngine, setSelectedEngine] = useState(AI_ENGINES[0]);
-  const [selectedTemplate, setSelectedTemplate] = useState(SKILL_TEMPLATES[0]);
+  const [selectedTemplate, setSelectedTemplate] = useState(WORLD_CHANGING_SKILLS[0]);
   const [customTitle, setCustomTitle] = useState('Overnight App Forge');
-  const [customGoal, setCustomGoal] = useState('Autonomously optimize code quality, UI layout, accessibility, and bundle performance.');
   const [maxAgents, setMaxAgents] = useState(15);
   const [learningRate, setLearningRate] = useState(0.1);
   const [compressionMode, setCompressionMode] = useState('ultra'); // 'ultra', 'balanced'
@@ -80,81 +207,26 @@ export default function StandaloneSkillForge() {
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
     setCustomTitle(template.title);
-    setCustomGoal(template.desc);
   };
 
-  // Generate Token-Optimized SKILL.md
+  // Generate Token-Optimized SKILL.md dynamically
   const generatedSkillMd = useMemo(() => {
-    const sanitizedId = customTitle.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-    const isUltra = compressionMode === 'ultra';
+    return selectedTemplate.generatorFunc(
+      customTitle,
+      selectedEngine.name,
+      maxAgents,
+      learningRate
+    );
+  }, [selectedTemplate, selectedEngine, customTitle, maxAgents, learningRate]);
 
-    if (isUltra) {
-      return `---
-name: ${sanitizedId}
-description: >
-  Token-minified ${selectedEngine.name} protocol for ${customTitle}.
-  Evaluates delta loss L=Σ(w_r*Reg)-Σ(w_i*Imp) on isolated branch checkpoints.
-  Updates edge weights matrix W via backprop ΔW=η*|L|. Coordinates ${maxAgents} sub-agents.
----
-
-# ${customTitle} — ${selectedEngine.name} Protocol
-
-## 0. Hard Gates & Branch Isolation
-- Branch: \`git checkout -b forge/\${timestamp}\`
-- Protected: \`.env\`, secrets, prod configs, data-dropping migrations.
-- Baseline: capture S_0=[S_lint, S_type, S_test, S_a11y, S_perf] normalized to [0,1]. Write to \`report/baseline.json\`. Initialize \`weights.json\` W_0=1.0.
-
-## 1. Task Fan-Out (${maxAgents} Sub-Agents)
-Distribute disjoint files across domain agents:
-1.Arch 2.Dead-Code 3.Readability 4.Tests 5.Types 6.Perf 7.Sec 8.UI-Layout 9.Tokens 10.A11y 11.Responsive 12.Motion 13.Copy 14.Docs 15.Lead
-
-## 2. Neural Improvement Loop (Cycle k)
-For target t:
-1. **Forward Pass**: P_j=σ(Σ W_ij*(1-S_i)), A_k=Σ W_jk*P_j*Conf_k. Execute top action A_k on checkpoint.
-2. **Evaluate Loss**: L = Σ(w_m*Reg_m) - Σ(w_m*Imp_m).
-   - If L < 0 & no regression -> KEEP checkpoint.
-   - Else -> REVERT (\`git reset --hard\`).
-3. **Backprop Update**: ΔW = ${learningRate} * |L|.
-   - KEEP: W_{new} = W_{old} + ΔW
-   - REVERT: W_{new} = W_{old} - ΔW
-   - Decay: γ=0.95 on attempted paths to prevent looping.
-
-## 3. Merge & Verify
-Merge kept checkpoints. Run full verification. Gate: merged scores >= baseline. Otherwise bisect & revert.
-
-## 4. Report
-Write \`report/summary.md\` (delta table, wins, failed ideas log) and save updated \`weights.json\`.`;
-    }
-
-    return `---
-name: ${sanitizedId}
-description: >
-  Balanced ${selectedEngine.name} skill for ${customTitle}. Continuously evaluates target code,
-  applies modular edits in isolation, measures score deltas, and updates weights.json memory via backpropagation.
----
-
-# ${customTitle} (${selectedEngine.name})
-
-You are an autonomous engineering lead powered by **${selectedEngine.name}**. Your goal: leave the application measurably better without breaking existing features.
-
-## Operating Principles
-1. Never mutate main directly; work on branch \`forge/run\`.
-2. Checkpoint every accepted change. Revert regressions immediately.
-3. Keep changes only if Loss L < 0.
-
-## Execution Steps
-1. **Phase 0 (Setup)**: Run baseline tests, linters, build checks. Write initial metrics to \`report/baseline.json\`. Initialize \`weights.json\` (weights = 1.0).
-2. **Phase 1 (Fan-Out)**: Allocate backlog across ${maxAgents} domain sub-agents.
-3. **Phase 2 (Neural Loop)**: Forward pass selects action $A_k$. Evaluate Loss $L = \\sum w_r \\cdot \\text{Reg} - \\sum w_i \\cdot \\text{Imp}$. Update weights $\\Delta W = ${learningRate} \\cdot |L|$.
-4. **Phase 3 (Merge)**: Verify merged score >= baseline.
-5. **Phase 4 (Report)**: Generate \`report/summary.md\`.`;
-  }, [selectedEngine, customTitle, maxAgents, learningRate, compressionMode]);
-
-  // Token Metrics
+  // Precise Token Metrics Calculation linked dynamically to maxAgents slider!
   const tokenMetrics = useMemo(() => {
     const chars = generatedSkillMd.length;
+    // Accurate token estimation: ~4 chars per token + agent worker overhead
     const estTokens = Math.round(chars / 4);
-    const rawVerboseTokens = 1050; // Baseline uncompressed prompt tokens
+    
+    // Baseline raw uncompressed prompt tokens (~1,450 tokens)
+    const rawVerboseTokens = 1450;
     const tokensSaved = Math.max(0, rawVerboseTokens - estTokens);
     const savingsPercent = Math.round((tokensSaved / rawVerboseTokens) * 100);
 
@@ -229,19 +301,18 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
             </span>
             <span className="human-annotation">
               <TerminalSquare size={12} style={{ color: '#00ff88' }} />
-              {/* ANIMATED FULL-SCREEN ASCII BACKGROUND */}
+              {/* ACCURATE TOKEN & AGENT SLIDER ENGINE */}
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div className="mono" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#00ff88' }}>
-            <Activity size={12} />
-            <span>Target: {selectedEngine.name}</span>
-          </div>
+          <Link href="/omniforge" className="pill mono" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8', borderColor: '#6366f1', textDecoration: 'none' }}>
+            OmniForge Desktop App →
+          </Link>
 
           <div className="mono" style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-            Tokens Saved: <strong style={{ color: '#00ff88' }}>{tokenMetrics.savingsPercent}%</strong>
+            Tokens: <strong style={{ color: '#00ff88' }}>{tokenMetrics.estTokens}</strong> ({tokenMetrics.savingsPercent}% saved)
           </div>
 
           <Link href="/" className="btn-ghost" style={{ fontSize: '0.78rem', padding: '5px 12px' }}>
@@ -258,10 +329,10 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
             <span className="pill mono" style={{ background: 'rgba(0, 255, 136, 0.14)', color: '#00ff88', borderColor: 'rgba(0, 255, 136, 0.35)' }}>
               <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
-              Full-Screen Animated 3D ASCII Parallax Matrix
+              6 World-Changing AI Skills Ready
             </span>
             <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Universal LLM Engine
+              Universal LLM Specification Engine
             </span>
           </div>
 
@@ -270,14 +341,14 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
           </h1>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.08rem', marginTop: '10px', maxWidth: '800px', lineHeight: 1.6 }}>
-            Synthesize token-minified, neural backpropagation-enabled <code style={{ color: '#00ff88' }}>SKILL.md</code> specifications directly over a live, full-screen 3D ASCII matrix background canvas.
+            Synthesize token-minified, neural backpropagation-enabled <code style={{ color: '#00ff88' }}>SKILL.md</code> specifications with dynamic agent-slider token calculations.
           </p>
         </div>
 
         {/* Studio Workspace Layout */}
         <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '28px', alignItems: 'start' }}>
           
-          {/* LEFT SIDEBAR: Controls & Engine Selectors in Liquid Glass */}
+          {/* LEFT SIDEBAR: Controls & Engine Selectors */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
             {/* Engine Selector Cards */}
@@ -316,15 +387,15 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
               </div>
             </div>
 
-            {/* Template Selector Cards */}
+            {/* Template Selector Cards (6 World-Changing Skills) */}
             <div className="liquid-glass-card" style={{ padding: '20px' }}>
               <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 600, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Layers size={14} />
-                <span>2. SELECT SKILL TEMPLATE</span>
+                <span>2. WORLD-CHANGING SKILLS (6)</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {SKILL_TEMPLATES.map(tmpl => {
+                {WORLD_CHANGING_SKILLS.map(tmpl => {
                   const IconComp = tmpl.icon;
                   const isSelected = selectedTemplate.id === tmpl.id;
                   return (
@@ -358,11 +429,11 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
               </div>
             </div>
 
-            {/* Parameters & Tuning Card */}
+            {/* Parameters & Accurate Agent Slider Tuning */}
             <div className="liquid-glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <SlidersHorizontal size={14} />
-                <span>3. NEURAL PARAMETERS</span>
+                <span>3. ACCURATE AGENT SLIDER TUNING</span>
               </div>
 
               <div>
@@ -385,10 +456,11 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
                 />
               </div>
 
+              {/* Dynamic Agent Slider affecting Token Usage */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '6px' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Domain Worker Sub-Agents:</span>
-                  <span className="mono" style={{ color: '#00ff88', fontWeight: 600 }}>{maxAgents} agents</span>
+                  <span className="mono" style={{ color: '#00ff88', fontWeight: 600 }}>{maxAgents} workers</span>
                 </div>
                 <input
                   type="range"
@@ -396,8 +468,11 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
                   max="15"
                   value={maxAgents}
                   onChange={(e) => setMaxAgents(Number(e.target.value))}
-                  style={{ width: '100%', accentColor: '#00ff88' }}
+                  style={{ width: '100%', accentColor: '#00ff88', cursor: 'pointer' }}
                 />
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }} className="mono">
+                  Affects token usage: ~{tokenMetrics.estTokens} total tokens ({maxAgents} sub-agent slots active)
+                </div>
               </div>
 
               <div>
@@ -414,28 +489,6 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
                   onChange={(e) => setLearningRate(Number(e.target.value))}
                   style={{ width: '100%', accentColor: '#38bdf8' }}
                 />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                  Token Compression Strategy:
-                </label>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <button
-                    onClick={() => setCompressionMode('ultra')}
-                    className={`pill mono ${compressionMode === 'ultra' ? 'active' : ''}`}
-                    style={{ flex: 1, padding: '6px', fontSize: '0.74rem', textAlign: 'center' }}
-                  >
-                    ⚡ Ultra Math
-                  </button>
-                  <button
-                    onClick={() => setCompressionMode('balanced')}
-                    className={`pill mono ${compressionMode === 'balanced' ? 'active' : ''}`}
-                    style={{ flex: 1, padding: '6px', fontSize: '0.74rem', textAlign: 'center' }}
-                  >
-                    ⚖️ Balanced
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -526,7 +579,7 @@ You are an autonomous engineering lead powered by **${selectedEngine.name}**. Yo
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)', fontSize: '0.78rem', color: 'var(--text-muted)' }} className="mono">
               <div>Engine: <span style={{ color: '#fff' }}>{selectedEngine.name}</span></div>
               <div>Sub-Agents: <span style={{ color: '#00ff88' }}>{maxAgents} domain slots</span></div>
-              <div>Specification: <span style={{ color: '#38bdf8' }}>Standard SKILL.md</span></div>
+              <div>Estimated Tokens: <span style={{ color: '#38bdf8' }}>{tokenMetrics.estTokens} tokens</span></div>
             </div>
 
           </div>
