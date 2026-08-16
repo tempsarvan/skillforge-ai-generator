@@ -1,6 +1,5 @@
 #!/bin/bash
 # Olym Native macOS Application Launcher
-# Launches native Chromium environment targeting Olym Browser engine
 
 URL="http://localhost:3001/olym"
 

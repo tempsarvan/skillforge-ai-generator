@@ -3,35 +3,34 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import ThreeCanvas from '@/components/ThreeCanvas';
-import { Laptop, Monitor, Download, ShieldCheck, Sparkles, Lock, Zap, Cpu, Terminal, ArrowRight, CheckCircle2, Globe, Cpu as CpuIcon } from 'lucide-react';
+import { Laptop, Monitor, Download, ShieldCheck, Sparkles, Lock, Zap, Cpu, Terminal, ArrowRight, CheckCircle2, Globe, Cpu as CpuIcon, Box, FileCode } from 'lucide-react';
 
 export default function OlymWebGatePage() {
   const [macArchitecture, setMacArchitecture] = useState('m5'); // 'm5', 'silicon', 'intel', 'universal'
+  const [packageFormat, setPackageFormat] = useState('dmg'); // 'dmg', 'app', 'script'
 
   const macDownloadLinks = {
-    m5: {
-      file: '/downloads/Olym-Browser-v1.0.0-macOS-AppleM5.dmg',
-      label: 'Apple M5 Series (M5, M5 Pro, M5 Max, M5 Ultra)',
-      badge: 'Next-Gen M5 Native'
+    dmg: {
+      m5: '/downloads/Olym-Browser-v1.0.0-macOS-AppleM5.dmg',
+      silicon: '/downloads/Olym-Browser-v1.0.0-macOS-AppleSilicon.dmg',
+      intel: '/downloads/Olym-Browser-v1.0.0-macOS-Intel.dmg',
+      universal: '/downloads/Olym-Browser-v1.0.0-macOS-Universal.dmg'
     },
-    silicon: {
-      file: '/downloads/Olym-Browser-v1.0.0-macOS-AppleSilicon.dmg',
-      label: 'Apple Silicon (M1, M2, M3, M4)',
-      badge: 'Arm64 Native'
+    app: {
+      m5: '/downloads/Olym-Browser-v1.0.0-macOS-AppleM5.app.zip',
+      silicon: '/downloads/Olym-Browser-v1.0.0-macOS-AppleSilicon.app.zip',
+      intel: '/downloads/Olym-Browser-v1.0.0-macOS-Intel.app.zip',
+      universal: '/downloads/Olym-Browser-v1.0.0-macOS-Universal.app.zip'
     },
-    intel: {
-      file: '/downloads/Olym-Browser-v1.0.0-macOS-Intel.dmg',
-      label: 'Intel Processor (x86_64)',
-      badge: 'Intel 64-bit'
-    },
-    universal: {
-      file: '/downloads/Olym-Browser-v1.0.0-macOS-Universal.dmg',
-      label: 'Universal macOS Binary',
-      badge: 'All Macs'
+    script: {
+      m5: '/downloads/install-olym-mac.sh',
+      silicon: '/downloads/install-olym-mac.sh',
+      intel: '/downloads/install-olym-mac.sh',
+      universal: '/downloads/install-olym-mac.sh'
     }
   };
 
-  const activeMacConfig = macDownloadLinks[macArchitecture];
+  const activeDownloadFile = macDownloadLinks[packageFormat][macArchitecture];
 
   return (
     <div style={{ position: 'relative', background: '#060608', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fafafa' }}>
@@ -81,39 +80,73 @@ export default function OlymWebGatePage() {
           </div>
 
           <h1 className="refractive-heading" style={{ fontSize: '3.4rem', fontWeight: 800, lineHeight: 1.08, marginBottom: '16px' }}>
-            Download Olym Browser for macOS & Windows
+            Download Olym Browser (.dmg & .app)
           </h1>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.15rem', lineHeight: 1.65 }}>
-            To guarantee 100% local privacy, unblocked Chromium CDP control, and hardware WebGPU acceleration, Olym runs as a native desktop application.
+            Select your preferred macOS installer format (.dmg installer disk image or standalone .app bundle) and chip architecture.
           </p>
         </div>
 
         {/* Multi-Platform Download Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '48px' }}>
           
-          {/* macOS Download Card with Apple M5 & Silicon Chip Selector */}
+          {/* macOS Download Card with DMG/APP Selector */}
           <div className="liquid-glass-card" style={{ padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid rgba(0, 255, 136, 0.35)' }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
                 <div style={{ background: 'rgba(0, 255, 136, 0.15)', padding: '12px', borderRadius: '12px', color: '#00ff88' }}>
                   <Laptop size={28} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff' }}>macOS Installer</h3>
-                  <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88' }}>Choose Chip Architecture</div>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff' }}>macOS Installer & App</h3>
+                  <div className="mono" style={{ fontSize: '0.78rem', color: '#00ff88' }}>Select Format & Architecture</div>
                 </div>
               </div>
 
-              {/* Architecture Chip Selector Radio Buttons */}
+              {/* 1. Format Choice Selector (.dmg vs .app vs install.sh) */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }} className="mono">
+                  1. Select Package Format:
+                </label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPackageFormat('dmg')}
+                    className={`pill mono ${packageFormat === 'dmg' ? 'active' : ''}`}
+                    style={{ flex: 1, padding: '8px', fontSize: '0.76rem', justifyContent: 'center' }}
+                  >
+                    <Box size={14} />
+                    <span>.DMG Disk Image</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPackageFormat('app')}
+                    className={`pill mono ${packageFormat === 'app' ? 'active' : ''}`}
+                    style={{ flex: 1, padding: '8px', fontSize: '0.76rem', justifyContent: 'center' }}
+                  >
+                    <Laptop size={14} />
+                    <span>.APP Bundle</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPackageFormat('script')}
+                    className={`pill mono ${packageFormat === 'script' ? 'active' : ''}`}
+                    style={{ flex: 1, padding: '8px', fontSize: '0.76rem', justifyContent: 'center' }}
+                  >
+                    <FileCode size={14} />
+                    <span>install.sh</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Architecture Chip Selector */}
               <div style={{ marginBottom: '24px' }}>
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }} className="mono">
-                  Select macOS Processor Chip:
+                  2. Select macOS Processor Chip:
                 </label>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  
-                  {/* Apple M5 Series Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('m5')}
@@ -127,18 +160,16 @@ export default function OlymWebGatePage() {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      textAlign: 'left'
+                      cursor: 'pointer'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <CpuIcon size={16} style={{ color: macArchitecture === 'm5' ? '#00ff88' : 'var(--text-muted)' }} />
-                      <span style={{ fontWeight: 600 }}>Apple M5 Series (M5, M5 Pro, M5 Max, M5 Ultra)</span>
+                      <span style={{ fontWeight: 600 }}>Apple M5 Series (M5, Pro, Max, Ultra)</span>
                     </div>
-                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '2px 6px', borderRadius: '4px' }}>⚡ Next-Gen</span>
+                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88' }}>⚡ Next-Gen</span>
                   </button>
 
-                  {/* Apple M1-M4 Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('silicon')}
@@ -152,18 +183,16 @@ export default function OlymWebGatePage() {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      textAlign: 'left'
+                      cursor: 'pointer'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <CpuIcon size={16} style={{ color: macArchitecture === 'silicon' ? '#00ff88' : 'var(--text-muted)' }} />
                       <span style={{ fontWeight: 600 }}>Apple Silicon (M1, M2, M3, M4)</span>
                     </div>
-                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88', background: 'rgba(0, 255, 136, 0.12)', padding: '2px 6px', borderRadius: '4px' }}>Arm64</span>
+                    <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff88' }}>Arm64</span>
                   </button>
 
-                  {/* Intel Choice */}
                   <button
                     type="button"
                     onClick={() => setMacArchitecture('intel')}
@@ -177,56 +206,29 @@ export default function OlymWebGatePage() {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      textAlign: 'left'
+                      cursor: 'pointer'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <CpuIcon size={16} style={{ color: macArchitecture === 'intel' ? '#00ff88' : 'var(--text-muted)' }} />
-                      <span style={{ fontWeight: 600 }}>Intel Processor (Core i5 / i7 / i9 / Xeon)</span>
+                      <span style={{ fontWeight: 600 }}>Intel Processor (x86_64)</span>
                     </div>
-                    <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>x86_64</span>
+                    <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Intel 64-bit</span>
                   </button>
-
-                  {/* Universal Choice */}
-                  <button
-                    type="button"
-                    onClick={() => setMacArchitecture('universal')}
-                    style={{
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: macArchitecture === 'universal' ? '1px solid #00ff88' : '1px solid var(--border)',
-                      background: macArchitecture === 'universal' ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255,255,255,0.03)',
-                      color: macArchitecture === 'universal' ? '#fff' : 'var(--text-muted)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      textAlign: 'left'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Globe size={16} style={{ color: macArchitecture === 'universal' ? '#00ff88' : 'var(--text-muted)' }} />
-                      <span style={{ fontWeight: 600 }}>Universal Installer (All Macs)</span>
-                    </div>
-                    <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Combined</span>
-                  </button>
-
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '24px' }} className="mono">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle2 size={14} style={{ color: '#00ff88' }} />
-                  <span>Selected: {activeMacConfig.label} ({activeMacConfig.badge})</span>
+                  <span>Target: {activeDownloadFile.split('/').pop()}</span>
                 </div>
               </div>
             </div>
 
-            {/* Verified Download Button pointing to public/downloads/ */}
+            {/* Download Button */}
             <a
-              href={activeMacConfig.file}
+              href={activeDownloadFile}
               download
               className="btn-clean"
               style={{
@@ -240,11 +242,11 @@ export default function OlymWebGatePage() {
               }}
             >
               <Download size={18} />
-              <span>Download {activeMacConfig.label.split(' ')[0]} {activeMacConfig.label.split(' ')[1]} DMG</span>
+              <span>Download {packageFormat.toUpperCase()} ({macArchitecture.toUpperCase()})</span>
             </a>
           </div>
 
-          {/* Windows Download Card (Windows 10/11) */}
+          {/* Windows Download Card */}
           <div className="liquid-glass-card" style={{ padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid rgba(99, 102, 241, 0.35)' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
@@ -273,7 +275,6 @@ export default function OlymWebGatePage() {
               </div>
             </div>
 
-            {/* Verified Download Button pointing to public/downloads/ */}
             <a
               href="/downloads/Olym-Browser-v1.0.0-Windows-Setup.exe"
               download
