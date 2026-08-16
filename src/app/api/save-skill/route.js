@@ -12,9 +12,9 @@ export async function POST(req) {
 
     const sanitizedName = skillName.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
     
-    // Save locally to .agents/skills/<sanitizedName>/SKILL.md in project workspace
+    // Save locally to skills/<sanitizedName>/SKILL.md in project workspace
     const baseDir = targetWorkspace || process.cwd();
-    const targetDir = path.join(baseDir, '.agents', 'skills', sanitizedName);
+    const targetDir = path.join(baseDir, 'skills', sanitizedName);
     
     fs.mkdirSync(targetDir, { recursive: true });
     const filePath = path.join(targetDir, 'SKILL.md');

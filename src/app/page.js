@@ -198,7 +198,7 @@ export default function Home() {
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Student Developer & Creator of Olym AI Browser</div>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            © 2026 Sarvan. Built with Next.js 15 & React 19.
+            © 2026 Sarvan. Built with Next.js 16 & React 19.
           </div>
         </div>
       </footer>

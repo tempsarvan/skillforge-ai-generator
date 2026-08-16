@@ -33,7 +33,7 @@ export default function StudentBioSection() {
             </h3>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '20px' }}>
-              I am a computer science student with a relentless obsession for building software that pushes the boundaries of performance and autonomous systems. Despite balancing my academic studies, I produce a prolific volume of applications, AI agent frameworks, WebGPU compute engines, and production Next.js 15 systems.
+              I am a computer science student with a relentless obsession for building software that pushes the boundaries of performance and autonomous systems. Despite balancing my academic studies, I produce a prolific volume of applications, AI agent frameworks, WebGPU compute engines, and production Next.js 16 systems.
             </p>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', lineHeight: 1.7, marginBottom: '28px' }}>
@@ -58,7 +58,7 @@ export default function StudentBioSection() {
                   <span>Engineering Stack</span>
                 </div>
                 <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                  Next.js 15 App Router, React 19, WebGPU WGSL Shaders, Node.js, Python, Tailwind, AST Analysis & Docker.
+                  Next.js 16 App Router, React 19, WebGPU WGSL Shaders, Node.js, Python, Tailwind, AST Analysis & Docker.
                 </div>
               </div>
             </div>

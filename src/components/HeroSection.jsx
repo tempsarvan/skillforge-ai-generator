@@ -9,7 +9,7 @@ export default function HeroSection() {
       <div className="container" style={{ maxWidth: '860px' }}>
         <div className="pill mono" style={{ display: 'inline-block', marginBottom: '20px' }}>
           <Sparkles size={14} style={{ display: 'inline', marginRight: '4px' }} />
-          Next.js 15 App Router + Server Actions
+          Next.js 16 App Router + Server Actions
         </div>
 
         <h1 className="refractive-heading" style={{ fontSize: 'clamp(2.4rem, 5vw, 4rem)', fontWeight: 600, lineHeight: 1.12, marginBottom: '24px' }}>

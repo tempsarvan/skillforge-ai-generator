@@ -9,7 +9,7 @@ const REPOSITORIES = [
     fullName: 'tempsarvan/skillforge-ai-generator',
     desc: 'Universal AI Skill Definition Studio with token minification, neural backpropagation memory, and 3D ASCII Parallax Canvas.',
     url: 'https://github.com/tempsarvan/skillforge-ai-generator',
-    tech: ['Next.js 15', 'React 19', 'ASCII Engine', 'SKILL.md'],
+    tech: ['Next.js 16', 'React 19', 'ASCII Engine', 'SKILL.md'],
     stars: 12,
     forks: 3
   },
