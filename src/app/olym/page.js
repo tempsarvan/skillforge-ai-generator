@@ -100,7 +100,7 @@ export default function OlymWebGatePage() {
               <span>Public Downloads Restricted</span>
             </div>
             <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              All installer binaries (.dmg, .exe, .zip) have been locked by administrator policy. Use the live web environment at <code style={{ color: '#00ff88' }}>studio.omniforge.dev</code>.
+              All installer binaries (.dmg, .exe, .zip) have been locked by administrator policy. Use the live web environment at <a href="https://omniforge-studio.workers.dev" target="_blank" rel="noopener noreferrer" style={{ color: '#00ff88', textDecoration: 'underline' }}>omniforge-studio.workers.dev</a>.
             </p>
           </div>
 

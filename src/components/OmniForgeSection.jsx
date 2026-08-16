@@ -35,7 +35,7 @@ export default function OmniForgeSection() {
     { type: 'sys', text: '✦ OmniForge Terminal & Automator CLI v1.0.0 (Cloudflare Edge Edition)' },
     { type: 'sys', text: 'Type "help" to list available commands (scrape, git, ai, build, automator, clear).' },
     { type: 'prompt', text: 'omniforge@studio:~$ status' },
-    { type: 'out', text: '● OmniForge Cloud Subdomain: ACTIVE (studio.omniforge.dev)\n🔒 Public Downloads: DISABLED by Admin' }
+    { type: 'out', text: '● OmniForge Cloud Domain: ACTIVE (omniforge-studio.workers.dev)\n🔒 Public Downloads: DISABLED by Admin' }
   ]);
   const terminalEndRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function OmniForgeSection() {
         text: `Available OmniForge CLI Commands:\n  - help                    List CLI commands\n  - status                  Check system & hardware status\n  - scrape <url>            Scrape website HTML, JS, CSS & APIs\n  - git pull | push | status Direct Git repository commands\n  - ai <prompt>             Run Gemini AI code reasoning engine\n  - build                   Run Next.js production build\n  - run <pipeline_id>       Execute automated pipeline\n  - clear                   Clear terminal log buffer`
       });
     } else if (lower === 'status') {
-      newLogs.push({ type: 'out', text: '● OmniForge Engine: ACTIVE\n● Cloudflare Subdomain: studio.omniforge.dev\n🔒 Downloads: DISABLED' });
+      newLogs.push({ type: 'out', text: '● OmniForge Engine: ACTIVE\n● Cloudflare Domain: omniforge-studio.workers.dev\n🔒 Downloads: DISABLED' });
     } else if (lower.startsWith('scrape')) {
       const url = cmd.split(' ')[1] || 'https://news.ycombinator.com';
       newLogs.push({ type: 'out', text: `⚡ Scraping site assets for ${url}...\n✓ HTML payload: 48 KB\n✓ Extracted 6 JS scripts & 4 CSS stylesheets\n✓ Found 18 API routes.` });
@@ -127,7 +127,7 @@ export default function OmniForgeSection() {
             </div>
             <span className="mono" style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <TerminalIcon size={16} style={{ color: '#00ff88' }} />
-              OmniForge Developer Studio — Cloudflare Subdomain (studio.omniforge.dev)
+              OmniForge Developer Studio — Cloudflare Domain (omniforge-studio.workers.dev)
             </span>
           </div>
 

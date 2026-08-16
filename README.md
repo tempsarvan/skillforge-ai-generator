@@ -112,11 +112,16 @@ OmniForge is packaged as a native desktop application supporting **macOS (Apple 
 
 ## 🚀 Installation & Setup
 
-### 1. Running the Web Studio Locally
+### 🌐 1. Live Cloudflare Domain Deployment
+Access the live studio application directly online:
+- **Cloudflare Workers Live Domain**: [https://omniforge-studio.workers.dev](https://omniforge-studio.workers.dev)
+- **Custom Studio Subdomain**: [https://studio.omniforge.dev](https://studio.omniforge.dev)
+
+### 💻 2. Running the Web Studio Locally
 ```bash
 # Clone the official repository
-git clone https://github.com/tempsarvan/skillforge-ai-generator.git
-cd skillforge-ai-generator
+git clone https://github.com/tempsarvan/omniforge.git
+cd omniforge
 
 # Install dependencies
 npm install
