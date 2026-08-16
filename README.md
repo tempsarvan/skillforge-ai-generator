@@ -114,7 +114,7 @@ OmniForge is packaged as a native desktop application supporting **macOS (Apple 
 
 ### 🌐 1. Live Cloudflare Domain Deployment
 Access the live studio application directly online:
-- **Cloudflare Workers Live Domain**: [https://omniforge-studio.workers.dev](https://omniforge-studio.workers.dev)
+- **Active Cloudflare Workers Live URL**: [https://omniforge-studio.chemical-coreopsis.workers.dev](https://omniforge-studio.chemical-coreopsis.workers.dev)
 - **Custom Studio Subdomain**: [https://studio.omniforge.dev](https://studio.omniforge.dev)
 
 ### 💻 2. Running the Web Studio Locally

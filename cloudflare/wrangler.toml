@@ -3,11 +3,11 @@ main = "worker.js"
 compatibility_date = "2026-08-16"
 workers_dev = true
 
-# Cloudflare Subdomain Route Configuration
-routes = [
-  { pattern = "studio.omniforge.dev/*", zone_name = "omniforge.dev" },
-  { pattern = "omniforge.dev/*", zone_name = "omniforge.dev" }
-]
+# Cloudflare Subdomain Route Configuration (enable when custom zone is added to account)
+# routes = [
+#   { pattern = "studio.omniforge.dev/*", zone_name = "omniforge.dev" },
+#   { pattern = "omniforge.dev/*", zone_name = "omniforge.dev" }
+# ]
 
 [vars]
 ENVIRONMENT = "production"
