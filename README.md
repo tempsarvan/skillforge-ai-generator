@@ -1,99 +1,36 @@
-# Systems Architecture & Engineering Portfolio
-
-A high-performance technical portfolio and architectural showcase built with **Vite, React, and Vanilla Modern CSS**. Demonstrates multi-disciplinary software engineering, low-latency distributed systems, WebGPU graphics compute, static security analysis, and responsive data communication.
-
----
-
-## Workspace Structure
-
-```
-portfolio/
-├── index.html                 # Root HTML entry with Google Fonts & SEO tags
-├── package.json               # Root dependencies & build scripts
-├── src/                       # Main Portfolio App
-│   ├── App.jsx                # Layout orchestration & smooth scrolling
-│   ├── index.css              # Obsidian dark theme & CSS design system
-│   ├── components/
-│   │   ├── Header.jsx         # Sticky glass navigation & text roll hover
-│   │   ├── Hero.jsx           # Editorial hero & headline
-│   │   ├── RefractiveText.jsx # Mouse-tracking text refraction & 3D tilt
-│   │   ├── TiltCard.jsx       # 3D glass spotlight tilt wrapper
-│   │   ├── BackgroundCanvas.js# Ambient responsive cursor mesh
-│   │   ├── ProjectsGallery.jsx# Interactive case studies & shader demo
-│   │   ├── ProjectDrawer.jsx  # Slide-out case study detail drawer
-│   │   ├── ServicesBreakdown.jsx # Core service breakdown cards
-│   │   ├── ArchitectureGenerator.jsx # Interactive spec builder
-│   │   ├── InteractiveSandbox.jsx   # Architectural CLI simulator
-│   │   ├── ArchitectureNotes.jsx    # Essays & technical syntheses
-│   │   ├── InquireSection.jsx       # Interactive inquiry contact form
-│   │   └── Footer.jsx         # Categorized link footer
-└── ritzenthaler-clone/        # Subfolder Clone of ryanritzenthaler.com
-    ├── package.json           # Subfolder dependencies (React Router DOM)
-    └── src/
-        ├── App.jsx            # Multi-page client router
-        ├── pages/             # Home, Projects, Examples, About, Inquire
-        └── components/        # Header & Footer with roll navigation
-```
-
----
-
-## Key Features
-
-1. **Mouse Refractive Typography**: Interactive radial light refraction beam tracking mouse cursor coordinates over headlines.
-2. **3D Spotlight Card Tilt**: Perspective tilt cards with glass glare beams on hover.
-3. **GPU Canvas Shader**: Real-time 60 FPS vector physics canvas rendering 100k simulated particles.
-4. **AST Security Audit Sandbox**: Live static analysis scanning for SQL injection concatenation and exposed credentials.
-5. **Architecture Blueprint Generator**: Interactive builder tool for selecting system components and generating Markdown specs.
-6. **Subfolder Website Copy (`ritzenthaler-clone`)**: Dedicated full client-side router copy of [ryanritzenthaler.com](https://www.ryanritzenthaler.com/) with rolling text navigation.
-
----
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
+First, run the development server:
 
-### Installation & Local Development
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/portfolio.git
-   cd portfolio
-   ```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-2. **Install Root Portfolio Dependencies**:
-   ```bash
-   npm install
-   ```
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-3. **Start the Root Development Server**:
-   ```bash
-   npm run dev
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-4. **Build Root for Production**:
-   ```bash
-   npm run build
-   ```
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-### Running the Subfolder Clone (`ritzenthaler-clone`)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-1. Navigate to the subfolder:
-   ```bash
-   cd ritzenthaler-clone
-   ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-2. Install dependencies & launch:
-   ```bash
-   npm install
-   npm run dev
-   ```
+## Deploy on Vercel
 
----
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## License
-
-MIT © Sarvan. All rights reserved.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

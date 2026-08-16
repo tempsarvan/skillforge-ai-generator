@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-08-16T15:51:00.000Z",
+  "branch": "overnight-forge-run",
+  "scores": {
+    "build": 1.0,
+    "lint_errors": 0,
+    "type_errors": 0,
+    "code_modularity": 0.5,
+    "accessibility": 0.6,
+    "performance": 0.9
+  },
+  "normalized_composite": 0.667
+}
