@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import NextAppInspector from '@/components/NextAppInspector';
-import SkillGenerator from '@/components/SkillGenerator';
+import SkillGeneratorPortal from '@/components/SkillGeneratorPortal';
 import HeroSection from '@/components/HeroSection';
 import WorksSection from '@/components/WorksSection';
 import InquireSection from '@/components/InquireSection';
@@ -228,7 +228,7 @@ export default function Home() {
 
         <div className="section-divider"></div>
 
-        <SkillGenerator />
+        <SkillGeneratorPortal />
 
         <div className="section-divider"></div>
 
